@@ -20,6 +20,7 @@ import io.jsonwebtoken.Jws;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,8 +33,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * RefreshTokenEndpoint
@@ -89,9 +90,10 @@ public class TokenEndpoint {
         if (user == null)
             throw new UsernameNotFoundException("User not found: " + subject);
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_MEMBER");
-        authorities.add(simpleGrantedAuthority);
+        if (user.getRoles() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
+                .collect(Collectors.toList());
 
         UserContext userContext = UserContext.create(user.getId(), user.getUsername(), authorities);
 

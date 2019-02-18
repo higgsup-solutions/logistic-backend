@@ -1,10 +1,14 @@
 package com.higgsup.base.service.impl;
 
+import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
-import com.higgsup.base.entity.ExceptionCode;
+import com.higgsup.base.entity.Role;
 import com.higgsup.base.entity.User;
+import com.higgsup.base.entity.UserRole;
 import com.higgsup.base.repository.UserRepository;
+import com.higgsup.base.repository.UserRoleRepository;
+import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,11 +24,17 @@ public class UserService implements IUserService {
 
   private final PasswordEncoder passwordEncoder;
 
+  private final UserRoleRepository userRoleRepository;
+
+  private final IUserRoleService userRoleService;
+
 
   public UserService(UserRepository userRepository,
-                     PasswordEncoder passwordEncoder) {
+                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.userRoleRepository = userRoleRepository;
+    this.userRoleService = userRoleService;
   }
 
   @Override
@@ -44,13 +54,13 @@ public class UserService implements IUserService {
 
     if(userRepository.existsByEmail(userDTO.getEmail())) {
       result.setData(false);
-      result.setMessageCode(ExceptionCode.DUPPLICATE_EMAIL);
+      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
       return result;
     }
 
     if(userRepository.existsByUsername(userDTO.getUserName())) {
       result.setData(false);
-      result.setMessageCode(ExceptionCode.DUPPLICATE_USERNAME);
+      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
       return result;
     }
 
@@ -63,6 +73,11 @@ public class UserService implements IUserService {
     user.setLastName(userDTO.getLastName());
     user.setFirstName(userDTO.getFirstName());
     userRepository.save(user);
+
+    UserRole userRole = new UserRole();
+    userRole.setRole(Role.MEMBER);
+    userRole.setUserId(user.getId());
+    userRoleService.create(userRole);
 
     result.setData(true);
     return result;

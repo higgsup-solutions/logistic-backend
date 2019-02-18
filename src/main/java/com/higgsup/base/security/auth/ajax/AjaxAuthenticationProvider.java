@@ -16,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author vladimir.stankovic
@@ -54,10 +54,10 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
           "Authentication Failed. Username or Password not valid.");
     }
 
-
-    List<GrantedAuthority> authorities = new ArrayList<>();
-    SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_MEMBER");
-    authorities.add(simpleGrantedAuthority);
+    List<GrantedAuthority> authorities = user.getRoles().stream()
+            .map(authority -> new SimpleGrantedAuthority(
+                    authority.getRole().authority()))
+            .collect(Collectors.toList());
 
     UserContext userContext = UserContext
         .create(user.getId(), user.getUsername(), authorities);
