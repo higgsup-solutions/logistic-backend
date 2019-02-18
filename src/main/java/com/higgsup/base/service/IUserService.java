@@ -13,4 +13,6 @@ public interface IUserService {
 
   ResponseMessage createUser(UserDTO userDTO);
 
+  ResponseMessage getAddressList(Long userId);
+
 }

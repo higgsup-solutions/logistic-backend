@@ -1,6 +1,7 @@
 package com.higgsup.base.service.impl;
 
 import com.higgsup.base.common.ErrorCode;
+import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.Role;
@@ -13,7 +14,9 @@ import com.higgsup.base.service.IUserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -80,6 +83,85 @@ public class UserService implements IUserService {
     userRoleService.create(userRole);
 
     result.setData(true);
+    return result;
+  }
+
+  @Override
+  public ResponseMessage getAddressList(Long userId) {
+    ResponseMessage result = new ResponseMessage();
+
+    List<Object[]> addressList = userRepository.selectAddressList(userId);
+
+    if(CollectionUtils.isEmpty(addressList)) {
+      return result;
+    }
+
+    List<AddressDTO> addressDTOList = new ArrayList<>();
+
+    for (Object[] data: addressList
+         ) {
+      AddressDTO addressDTO = new AddressDTO();
+      if(data[0] != null) {
+        addressDTO.setId(Long.valueOf(data[0].toString()));
+      }
+
+      if(data[1] != null) {
+        addressDTO.setCountryId(Long.valueOf(data[1].toString()));
+      }
+
+      if(data[2] != null) {
+        addressDTO.setUserType(String.valueOf(data[2]));
+      }
+
+      if(data[3] != null) {
+        addressDTO.setCompany(String.valueOf(data[3]));
+      }
+
+      if(data[4] != null) {
+        addressDTO.setContactName(String.valueOf(data[4]));
+      }
+
+      if(data[5] != null) {
+        addressDTO.setSenderDefault(Boolean.valueOf(data[5].toString()));
+      }
+
+      if(data[6] != null) {
+        addressDTO.setReceipientDefault(Boolean.valueOf(data[6].toString()));
+      }
+
+      if(data[7] != null) {
+        addressDTO.setAddress1(String.valueOf(data[7]));
+      }
+
+      if(data[8] != null) {
+        addressDTO.setAddress2(String.valueOf(data[8]));
+      }
+
+      if(data[9] != null) {
+        addressDTO.setCityId(Long.valueOf(data[9].toString()));
+      }
+
+      if(data[10] != null) {
+        addressDTO.setCityName(String.valueOf(data[10]));
+      }
+
+      if(data[11] != null) {
+        addressDTO.setPostalCode(String.valueOf(data[11]));
+      }
+
+      if(data[12] != null) {
+        addressDTO.setCountryName(String.valueOf(data[12]));
+      }
+
+      if(data[13] != null) {
+        addressDTO.setStateProvince(String.valueOf(data[13]));
+      }
+
+      addressDTOList.add(addressDTO);
+
+    }
+
+    result.setData(addressDTOList);
     return result;
   }
 }
