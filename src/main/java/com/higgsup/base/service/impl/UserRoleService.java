@@ -11,16 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserRoleService implements IUserRoleService {
 
-    private final UserRoleRepository userRoleRepository;
+  private final UserRoleRepository userRoleRepository;
 
-    public UserRoleService(
-            UserRoleRepository userRoleRepository) {
-        this.userRoleRepository = userRoleRepository;
-    }
+  public UserRoleService(
+      UserRoleRepository userRoleRepository) {
+    this.userRoleRepository = userRoleRepository;
+  }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
-    public void create(UserRole userRole) {
-        userRoleRepository.save(userRole);
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
+  public void create(UserRole userRole) {
+    userRoleRepository.save(userRole);
+  }
 }
