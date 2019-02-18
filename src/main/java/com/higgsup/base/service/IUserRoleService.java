@@ -4,6 +4,6 @@ import com.higgsup.base.entity.UserRole;
 
 public interface IUserRoleService {
 
-    void create(UserRole userRole);
+  void create(UserRole userRole);
 
 }
