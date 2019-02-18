@@ -6,7 +6,6 @@ import com.higgsup.base.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -17,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author vladimir.stankovic
@@ -55,14 +54,10 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
           "Authentication Failed. Username or Password not valid.");
     }
 
-    if (user.getRoles() == null)
-      throw new InsufficientAuthenticationException(
-          "User has no roles assigned");
 
-    List<GrantedAuthority> authorities = user.getRoles().stream()
-        .map(authority -> new SimpleGrantedAuthority(
-            authority.getRole().authority()))
-        .collect(Collectors.toList());
+    List<GrantedAuthority> authorities = new ArrayList<>();
+    SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_MEMBER");
+    authorities.add(simpleGrantedAuthority);
 
     UserContext userContext = UserContext
         .create(user.getId(), user.getUsername(), authorities);

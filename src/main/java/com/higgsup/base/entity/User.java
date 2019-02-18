@@ -26,18 +26,22 @@ public class User {
     
     @Column(name="password")
     private String password;
-    
-    @OneToMany
-    @JoinColumn(name="APP_USER_ID", referencedColumnName="ID")
-    private List<UserRole> roles;
-    
+
+    @Column(name="last_name")
+    private String lastName;
+
+    @Column(name="first_name")
+    private String firstName;
+
+    @Column(name="country")
+    private String country;
+
+    @Column(name="city")
+    private String city;
+
+    @Column(name="email")
+    private String email;
+
     public User() { }
     
-    public User(Long id, String username, String password, List<UserRole> roles) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-    }
-
-}
+ }

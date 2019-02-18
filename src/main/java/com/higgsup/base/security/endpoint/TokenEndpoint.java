@@ -1,6 +1,8 @@
 package com.higgsup.base.security.endpoint;
 
 import com.higgsup.base.common.ApplicationSecurityProperty;
+import com.higgsup.base.dto.UserDTO;
+import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.User;
 import com.higgsup.base.entity.UserToken;
 import com.higgsup.base.security.auth.ajax.LoginRequest;
@@ -15,9 +17,9 @@ import com.higgsup.base.service.IUserService;
 import com.higgsup.base.service.IUserTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,8 +32,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * RefreshTokenEndpoint
@@ -87,10 +89,9 @@ public class TokenEndpoint {
         if (user == null)
             throw new UsernameNotFoundException("User not found: " + subject);
 
-        if (user.getRoles() == null) throw new InsufficientAuthenticationException("User has no roles assigned");
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
-                .collect(Collectors.toList());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_MEMBER");
+        authorities.add(simpleGrantedAuthority);
 
         UserContext userContext = UserContext.create(user.getId(), user.getUsername(), authorities);
 
@@ -126,5 +127,13 @@ public class TokenEndpoint {
     @PostMapping("/api/auth/login")
     public void login(@RequestBody LoginRequest loginRequest) {
 
+    }
+
+    @PostMapping("/api/auth/create")
+    public ResponseEntity<ResponseMessage> create(
+            @RequestBody UserDTO userDTO) {
+        ResponseMessage result = userService.createUser(userDTO);
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
     }
 }
