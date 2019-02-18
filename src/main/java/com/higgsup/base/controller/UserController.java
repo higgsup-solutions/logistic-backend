@@ -26,7 +26,7 @@ public class UserController {
     }
 
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}/addresses")
     @RequestLogger
     public ResponseEntity<ResponseMessage> getAddressList(@PathVariable("id") Long id) {
         ResponseMessage result = userService.getAddressList(id);
