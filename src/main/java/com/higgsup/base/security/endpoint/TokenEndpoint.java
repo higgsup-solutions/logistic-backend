@@ -1,6 +1,8 @@
 package com.higgsup.base.security.endpoint;
 
 import com.higgsup.base.common.ApplicationSecurityProperty;
+import com.higgsup.base.dto.UserDTO;
+import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.User;
 import com.higgsup.base.entity.UserToken;
 import com.higgsup.base.security.auth.ajax.LoginRequest;
@@ -15,6 +17,7 @@ import com.higgsup.base.service.IUserService;
 import com.higgsup.base.service.IUserTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -126,5 +129,13 @@ public class TokenEndpoint {
     @PostMapping("/api/auth/login")
     public void login(@RequestBody LoginRequest loginRequest) {
 
+    }
+
+    @PostMapping("/api/auth/create")
+    public ResponseEntity<ResponseMessage> create(
+            @RequestBody UserDTO userDTO) {
+        ResponseMessage result = userService.createUser(userDTO);
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
     }
 }

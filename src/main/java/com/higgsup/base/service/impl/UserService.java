@@ -2,10 +2,10 @@ package com.higgsup.base.service.impl;
 
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.UserDTO;
+import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.Role;
 import com.higgsup.base.entity.User;
 import com.higgsup.base.entity.UserRole;
-import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.repository.UserRepository;
 import com.higgsup.base.repository.UserRoleRepository;
 import com.higgsup.base.service.IUserRoleService;
@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,9 +30,7 @@ public class UserService implements IUserService {
 
 
   public UserService(UserRepository userRepository,
-      PasswordEncoder passwordEncoder,
-      UserRoleRepository userRoleRepository,
-      IUserRoleService userRoleService) {
+                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.userRoleRepository = userRoleRepository;
@@ -52,32 +49,37 @@ public class UserService implements IUserService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void createUser(UserDTO userDTO) {
-    User user = new User();
-    user.setId(userDTO.getId());
-    user.setUsername(userDTO.getUserName());
-    user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-    List<UserRole> roles = new ArrayList<>();
-    userRepository.save(user);
-    UserRole userRole = new UserRole();
-    userRole.setRole(Role.MEMBER);
-    userRole.setUserId(user.getId());
-    roles.add(userRole);
-    userRoleRepository.saveAll(roles);
-    throw new BusinessException(ErrorCode.GLOBAL, "Test business exception...");
-  }
+  public ResponseMessage createUser(UserDTO userDTO) {
+    ResponseMessage result = new ResponseMessage();
 
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public void createUserDemoTransaction(UserDTO userDTO) {
+    if(userRepository.existsByEmail(userDTO.getEmail())) {
+      result.setData(false);
+      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
+      return result;
+    }
+
+    if(userRepository.existsByUsername(userDTO.getUserName())) {
+      result.setData(false);
+      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
+      return result;
+    }
+
     User user = new User();
-    user.setId(userDTO.getId());
     user.setUsername(userDTO.getUserName());
     user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+    user.setCity(userDTO.getCity());
+    user.setCountry(userDTO.getCountry());
+    user.setEmail(userDTO.getEmail());
+    user.setLastName(userDTO.getLastName());
+    user.setFirstName(userDTO.getFirstName());
     userRepository.save(user);
+
     UserRole userRole = new UserRole();
     userRole.setRole(Role.MEMBER);
     userRole.setUserId(user.getId());
     userRoleService.create(userRole);
+
+    result.setData(true);
+    return result;
   }
 }
