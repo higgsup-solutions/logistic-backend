@@ -14,8 +14,8 @@ public enum ErrorCode {
     VALIDATION(1),
     AUTHENTICATION(10),
     JWT_TOKEN_EXPIRED(11),
-    DUPPLICATE_EMAIL(00001),
-    DUPPLICATE_USERNAME(00002);
+    DUPPLICATE_EMAIL(12),
+    DUPPLICATE_USERNAME(13);
     
     private int errorCode;
 
