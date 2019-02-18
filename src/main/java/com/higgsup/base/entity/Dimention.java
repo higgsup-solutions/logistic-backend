@@ -1,6 +1,7 @@
 package com.higgsup.base.entity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -11,6 +12,7 @@ public class Dimention {
     private Double weight;
     private Double height;
     private Byte dimentionDefault;
+    private Timestamp lastUpdated;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -71,6 +73,16 @@ public class Dimention {
 
     public void setDimentionDefault(Byte dimentionDefault) {
         this.dimentionDefault = dimentionDefault;
+    }
+
+    @Basic
+    @Column(name = "last_updated", nullable = true)
+    public Timestamp getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Timestamp lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     @Override
