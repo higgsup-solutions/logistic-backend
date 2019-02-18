@@ -9,8 +9,8 @@ import java.util.Objects;
 public class PriceDetail {
     private long id;
     private Long packageId;
-    private String addressFrom;
-    private String addressTo;
+    private BigDecimal addressFromId;
+    private BigDecimal addressToId;
     private Integer zoneNo;
     private BigDecimal zonePrice;
     private BigDecimal baseRate1;
@@ -42,23 +42,23 @@ public class PriceDetail {
     }
 
     @Basic
-    @Column(name = "address_from", nullable = true, length = 225)
-    public String getAddressFrom() {
-        return addressFrom;
+    @Column(name = "address_from_id", nullable = true, length = 225)
+    public BigDecimal getAddressFromId() {
+        return addressFromId;
     }
 
-    public void setAddressFrom(String addressFrom) {
-        this.addressFrom = addressFrom;
+    public void setAddressFromId(BigDecimal addressFromId) {
+        this.addressFromId = addressFromId;
     }
 
     @Basic
-    @Column(name = "address_to", nullable = true, length = 225)
-    public String getAddressTo() {
-        return addressTo;
+    @Column(name = "address_to_id", nullable = true, length = 225)
+    public BigDecimal getAddressToId() {
+        return addressToId;
     }
 
-    public void setAddressTo(String addressTo) {
-        this.addressTo = addressTo;
+    public void setAddressToId(BigDecimal addressToId) {
+        this.addressToId = addressToId;
     }
 
     @Basic
@@ -148,8 +148,8 @@ public class PriceDetail {
         PriceDetail that = (PriceDetail) o;
         return id == that.id &&
                 Objects.equals(packageId, that.packageId) &&
-                Objects.equals(addressFrom, that.addressFrom) &&
-                Objects.equals(addressTo, that.addressTo) &&
+                Objects.equals(addressFromId, that.addressFromId) &&
+                Objects.equals(addressToId, that.addressToId) &&
                 Objects.equals(zoneNo, that.zoneNo) &&
                 Objects.equals(zonePrice, that.zonePrice) &&
                 Objects.equals(baseRate1, that.baseRate1) &&
@@ -162,6 +162,6 @@ public class PriceDetail {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, packageId, addressFrom, addressTo, zoneNo, zonePrice, baseRate1, baseRate2, baseRate3, baseRate4, contentType, dangerousCharge);
+        return Objects.hash(id, packageId, addressFromId, addressToId, zoneNo, zonePrice, baseRate1, baseRate2, baseRate3, baseRate4, contentType, dangerousCharge);
     }
 }
