@@ -3,13 +3,17 @@ package com.higgsup.base.service.impl;
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
+import com.higgsup.base.entity.Dimention;
 import com.higgsup.base.entity.Role;
 import com.higgsup.base.entity.User;
 import com.higgsup.base.entity.UserRole;
+import com.higgsup.base.repository.DimentionRepository;
 import com.higgsup.base.repository.UserRepository;
 import com.higgsup.base.repository.UserRoleRepository;
+import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +32,16 @@ public class UserService implements IUserService {
 
   private final IUserRoleService userRoleService;
 
+  private  final DimentionRepository dimentionRepository;
+
 
   public UserService(UserRepository userRepository,
-                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService) {
+                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.userRoleRepository = userRoleRepository;
     this.userRoleService = userRoleService;
+    this.dimentionRepository = dimentionRepository;
   }
 
   @Override
@@ -81,5 +88,11 @@ public class UserService implements IUserService {
 
     result.setData(true);
     return result;
+  }
+
+  @Override
+  public List<Dimention> getTop5Dimension() {
+    UserContext userContext =(UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return dimentionRepository.getTop5Dimention(userContext.getUserId());
   }
 }
