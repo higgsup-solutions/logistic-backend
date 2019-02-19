@@ -6,25 +6,26 @@ import java.util.Objects;
 @Entity
 @Table(name = "address_book")
 public class AddressBook {
-    private long id;
+    private Long id;
     private Long userId;
     private Long countryId;
+    private Long cityId;
     private String userType;
     private String company;
     private String contactName;
-    private Byte senderDefault;
-    private Byte receipientDefault;
+    private Boolean senderDefault;
+    private Boolean receipientDefault;
     private String address1;
     private String address2;
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -46,6 +47,16 @@ public class AddressBook {
 
     public void setCountryId(Long countryId) {
         this.countryId = countryId;
+    }
+
+    @Basic
+    @Column(name = "city_id", nullable = true)
+    public Long getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Long cityId) {
+        this.cityId = cityId;
     }
 
     @Basic
@@ -80,21 +91,21 @@ public class AddressBook {
 
     @Basic
     @Column(name = "sender_default", nullable = true)
-    public Byte getSenderDefault() {
+    public Boolean getSenderDefault() {
         return senderDefault;
     }
 
-    public void setSenderDefault(Byte senderDefault) {
+    public void setSenderDefault(Boolean senderDefault) {
         this.senderDefault = senderDefault;
     }
 
     @Basic
     @Column(name = "receipient_default", nullable = true)
-    public Byte getReceipientDefault() {
+    public Boolean getReceipientDefault() {
         return receipientDefault;
     }
 
-    public void setReceipientDefault(Byte receipientDefault) {
+    public void setReceipientDefault(Boolean receipientDefault) {
         this.receipientDefault = receipientDefault;
     }
 
@@ -126,6 +137,7 @@ public class AddressBook {
         return id == that.id &&
                 Objects.equals(userId, that.userId) &&
                 Objects.equals(countryId, that.countryId) &&
+                Objects.equals(cityId, that.cityId) &&
                 Objects.equals(userType, that.userType) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(contactName, that.contactName) &&
@@ -137,6 +149,6 @@ public class AddressBook {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, countryId, userType, company, contactName, senderDefault, receipientDefault, address1, address2);
+        return Objects.hash(id, userId, countryId, cityId, userType, company, contactName, senderDefault, receipientDefault, address1, address2);
     }
 }

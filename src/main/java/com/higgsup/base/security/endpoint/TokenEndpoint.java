@@ -134,7 +134,8 @@ public class TokenEndpoint {
     @PostMapping("/api/auth/create")
     public ResponseEntity<ResponseMessage> create(
             @RequestBody UserDTO userDTO) {
-        ResponseMessage result = userService.createUser(userDTO);
+        ResponseMessage result = new ResponseMessage();
+        result.setData(userService.createUser(userDTO));
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
