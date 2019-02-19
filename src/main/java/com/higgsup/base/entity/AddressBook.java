@@ -6,7 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "address_book")
 public class AddressBook {
-    private long id;
+    private Long id;
     private Long userId;
     private Long countryId;
     private Long cityId;
@@ -21,11 +21,11 @@ public class AddressBook {
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

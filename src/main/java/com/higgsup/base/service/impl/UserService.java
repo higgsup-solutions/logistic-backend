@@ -4,13 +4,16 @@ import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
+import com.higgsup.base.entity.AddressBook;
 import com.higgsup.base.entity.Role;
 import com.higgsup.base.entity.User;
 import com.higgsup.base.entity.UserRole;
+import com.higgsup.base.repository.AddressBookRepository;
 import com.higgsup.base.repository.UserRepository;
 import com.higgsup.base.repository.UserRoleRepository;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class UserService implements IUserService {
 
   private final UserRepository userRepository;
@@ -31,13 +34,19 @@ public class UserService implements IUserService {
 
   private final IUserRoleService userRoleService;
 
+  private final AddressBookRepository addressBookRepository;
+
+  private final MapperFacade mapperFacade;
+
 
   public UserService(UserRepository userRepository,
-                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService) {
+                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.userRoleRepository = userRoleRepository;
     this.userRoleService = userRoleService;
+    this.addressBookRepository = addressBookRepository;
+    this.mapperFacade = mapperFacade;
   }
 
   @Override
@@ -163,5 +172,14 @@ public class UserService implements IUserService {
 
     result.setData(addressDTOList);
     return result;
+  }
+
+  @Override
+  public AddressBook saveAddress(AddressDTO addressDTO, Long userId) {
+    AddressBook addressBook = mapperFacade.map(addressDTO, AddressBook.class);
+    addressBook.setUserId(userId);
+    addressBook.setId(null);
+    addressBookRepository.save(addressBook);
+    return addressBook;
   }
 }
