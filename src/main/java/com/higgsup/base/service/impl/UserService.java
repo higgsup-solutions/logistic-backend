@@ -1,6 +1,7 @@
 package com.higgsup.base.service.impl;
 
 import com.higgsup.base.common.ErrorCode;
+import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.Dimention;
@@ -13,15 +14,17 @@ import com.higgsup.base.repository.UserRoleRepository;
 import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class UserService implements IUserService {
 
   private final UserRepository userRepository;
@@ -55,7 +58,6 @@ public class UserService implements IUserService {
   }
 
   @Override
-  @Transactional(rollbackFor = Exception.class)
   public ResponseMessage createUser(UserDTO userDTO) {
     ResponseMessage result = new ResponseMessage();
 
@@ -91,8 +93,23 @@ public class UserService implements IUserService {
   }
 
   @Override
-  public List<Dimention> getTop5Dimension() {
-    UserContext userContext =(UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    return dimentionRepository.getTop5Dimention(userContext.getUserId());
+  public List<DimensionDTO> getTop5Dimension() {
+    List<DimensionDTO> dimensionDTOS = new ArrayList<>();
+    UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    List<Dimention> dimentions = dimentionRepository.getTop5Dimention(userContext.getUserId());
+
+    // convert from dimension entity to dimention DTO by bean copy
+    for (Dimention dimention : dimentions) {
+      DimensionDTO dimensionDTO = new DimensionDTO();
+      if (dimention.getDimentionDefault() == 0){
+        dimensionDTO.setDimentionDefault(false);
+      } else {
+        dimensionDTO.setDimentionDefault(true);
+      }
+      BeanUtils.copyProperties(dimention, dimensionDTO);
+      dimensionDTOS.add(dimensionDTO);
+
+    }
+    return dimensionDTOS;
   }
 }

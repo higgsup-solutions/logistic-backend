@@ -1,10 +1,8 @@
 package com.higgsup.base.controller;
 
-import com.higgsup.base.dto.DemoDTO;
 import com.higgsup.base.dto.DimensionDTO;
+import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
-import com.higgsup.base.entity.Dimention;
-import com.higgsup.base.entity.User;
 import com.higgsup.base.log.RequestLogger;
 import com.higgsup.base.service.IUserService;
 import org.slf4j.Logger;
@@ -33,13 +31,15 @@ public class UserController {
 
     @GetMapping("/dimension")
     @RequestLogger
-    public DimensionDTO getTop5Dimension(HttpServletRequest request) {
-        DimensionDTO dimensionDTO = new DimensionDTO();
-        ResponseMessage<List<Dimention>> responseMessage = new ResponseMessage<>();
+    public IPagedResponse<List<DimensionDTO>> getTop5Dimension(HttpServletRequest request) {
+        IPagedResponse iPagedResponse = new IPagedResponse();
+
+        ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
         responseMessage.setData(userService.getTop5Dimension());
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-        dimensionDTO.setResponseMessage(responseMessage);
-        return dimensionDTO;
+        iPagedResponse.setResponseMessage(responseMessage);
+
+        return iPagedResponse;
     }
 
 }
