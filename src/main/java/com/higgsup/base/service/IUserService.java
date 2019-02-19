@@ -1,5 +1,6 @@
 package com.higgsup.base.service;
 
+import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.User;
@@ -12,5 +13,5 @@ public interface IUserService {
   List<User> getUser();
 
   ResponseMessage createUser(UserDTO userDTO);
-
+  List<DimensionDTO> getTop5Dimension();
 }
