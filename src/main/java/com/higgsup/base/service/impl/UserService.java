@@ -2,18 +2,20 @@ package com.higgsup.base.service.impl;
 
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.AddressDTO;
+import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.ResponseMessage;
-import com.higgsup.base.entity.AddressBook;
-import com.higgsup.base.entity.Role;
-import com.higgsup.base.entity.User;
-import com.higgsup.base.entity.UserRole;
+import com.higgsup.base.entity.*;
 import com.higgsup.base.repository.AddressBookRepository;
+import com.higgsup.base.repository.DimentionRepository;
 import com.higgsup.base.repository.UserRepository;
 import com.higgsup.base.repository.UserRoleRepository;
+import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,160 +28,183 @@ import java.util.List;
 @Transactional
 public class UserService implements IUserService {
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-  private final UserRoleRepository userRoleRepository;
+    private final UserRoleRepository userRoleRepository;
 
-  private final IUserRoleService userRoleService;
+    private final IUserRoleService userRoleService;
 
-  private final AddressBookRepository addressBookRepository;
+    private final DimentionRepository dimentionRepository;
 
-  private final MapperFacade mapperFacade;
+    private final AddressBookRepository addressBookRepository;
+
+    private final MapperFacade mapperFacade;
 
 
-  public UserService(UserRepository userRepository,
-                     PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
-    this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
-    this.userRoleRepository = userRoleRepository;
-    this.userRoleService = userRoleService;
-    this.addressBookRepository = addressBookRepository;
-    this.mapperFacade = mapperFacade;
-  }
-
-  @Override
-  public User getByUsername(String username) {
-    return userRepository.findByUsername(username);
-  }
-
-  @Override
-  public List<User> getUser() {
-    return userRepository.findAll();
-  }
-
-  @Override
-  @Transactional(rollbackFor = Exception.class)
-  public ResponseMessage createUser(UserDTO userDTO) {
-    ResponseMessage result = new ResponseMessage();
-
-    if(userRepository.existsByEmail(userDTO.getEmail())) {
-      result.setData(false);
-      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
-      return result;
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userRoleRepository = userRoleRepository;
+        this.userRoleService = userRoleService;
+        this.dimentionRepository = dimentionRepository;
+        this.addressBookRepository = addressBookRepository;
+        this.mapperFacade = mapperFacade;
     }
 
-    if(userRepository.existsByUsername(userDTO.getUserName())) {
-      result.setData(false);
-      result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
-      return result;
+    @Override
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
-    User user = new User();
-    user.setUsername(userDTO.getUserName());
-    user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-    user.setCity(userDTO.getCity());
-    user.setCountry(userDTO.getCountry());
-    user.setEmail(userDTO.getEmail());
-    user.setLastName(userDTO.getLastName());
-    user.setFirstName(userDTO.getFirstName());
-    userRepository.save(user);
-
-    UserRole userRole = new UserRole();
-    userRole.setRole(Role.MEMBER);
-    userRole.setUserId(user.getId());
-    userRoleService.create(userRole);
-
-    result.setData(true);
-    return result;
-  }
-
-  @Override
-  public ResponseMessage getAddressList(Long userId) {
-    ResponseMessage result = new ResponseMessage();
-
-    List<Object[]> addressList = userRepository.selectAddressList(userId);
-
-    if(CollectionUtils.isEmpty(addressList)) {
-      return result;
+    @Override
+    public List<User> getUser() {
+        return userRepository.findAll();
     }
 
-    List<AddressDTO> addressDTOList = new ArrayList<>();
+    @Override
+    public ResponseMessage createUser(UserDTO userDTO) {
+        ResponseMessage result = new ResponseMessage();
 
-    for (Object[] data: addressList
-         ) {
-      AddressDTO addressDTO = new AddressDTO();
-      if(data[0] != null) {
-        addressDTO.setId(Long.valueOf(data[0].toString()));
-      }
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            result.setData(false);
+            result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
+            return result;
+        }
 
-      if(data[1] != null) {
-        addressDTO.setCountryId(Long.valueOf(data[1].toString()));
-      }
+        if (userRepository.existsByUsername(userDTO.getUserName())) {
+            result.setData(false);
+            result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
+            return result;
+        }
 
-      if(data[2] != null) {
-        addressDTO.setUserType(String.valueOf(data[2]));
-      }
+        User user = new User();
+        user.setUsername(userDTO.getUserName());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setCity(userDTO.getCity());
+        user.setCountry(userDTO.getCountry());
+        user.setEmail(userDTO.getEmail());
+        user.setLastName(userDTO.getLastName());
+        user.setFirstName(userDTO.getFirstName());
+        userRepository.save(user);
 
-      if(data[3] != null) {
-        addressDTO.setCompany(String.valueOf(data[3]));
-      }
+        UserRole userRole = new UserRole();
+        userRole.setRole(Role.MEMBER);
+        userRole.setUserId(user.getId());
+        userRoleService.create(userRole);
 
-      if(data[4] != null) {
-        addressDTO.setContactName(String.valueOf(data[4]));
-      }
-
-      if(data[5] != null) {
-        addressDTO.setSenderDefault(Boolean.valueOf(data[5].toString()));
-      }
-
-      if(data[6] != null) {
-        addressDTO.setReceipientDefault(Boolean.valueOf(data[6].toString()));
-      }
-
-      if(data[7] != null) {
-        addressDTO.setAddress1(String.valueOf(data[7]));
-      }
-
-      if(data[8] != null) {
-        addressDTO.setAddress2(String.valueOf(data[8]));
-      }
-
-      if(data[9] != null) {
-        addressDTO.setCityId(Long.valueOf(data[9].toString()));
-      }
-
-      if(data[10] != null) {
-        addressDTO.setCityName(String.valueOf(data[10]));
-      }
-
-      if(data[11] != null) {
-        addressDTO.setPostalCode(String.valueOf(data[11]));
-      }
-
-      if(data[12] != null) {
-        addressDTO.setCountryName(String.valueOf(data[12]));
-      }
-
-      if(data[13] != null) {
-        addressDTO.setStateProvince(String.valueOf(data[13]));
-      }
-
-      addressDTOList.add(addressDTO);
-
+        result.setData(true);
+        return result;
     }
 
-    result.setData(addressDTOList);
-    return result;
-  }
+    @Override
+    public List<DimensionDTO> getTop5Dimension() {
+        List<DimensionDTO> dimensionDTOS = new ArrayList<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Dimention> dimentions = dimentionRepository.getTop5Dimention(userContext.getUserId());
 
-  @Override
-  public AddressBook saveAddress(AddressDTO addressDTO, Long userId) {
-    AddressBook addressBook = mapperFacade.map(addressDTO, AddressBook.class);
-    addressBook.setUserId(userId);
-    addressBook.setId(null);
-    addressBookRepository.save(addressBook);
-    return addressBook;
-  }
+        // convert from dimension entity to dimention DTO by bean copy
+        for (Dimention dimention : dimentions) {
+            DimensionDTO dimensionDTO = new DimensionDTO();
+            if (dimention.getDimentionDefault() == 0) {
+                dimensionDTO.setDimentionDefault(false);
+            } else {
+                dimensionDTO.setDimentionDefault(true);
+            }
+            BeanUtils.copyProperties(dimention, dimensionDTO);
+            dimensionDTOS.add(dimensionDTO);
+
+        }
+        return dimensionDTOS;
+    }
+
+    @Override
+    public ResponseMessage getAddressList(Long userId) {
+        ResponseMessage result = new ResponseMessage();
+
+        List<Object[]> addressList = userRepository.selectAddressList(userId);
+
+        if (CollectionUtils.isEmpty(addressList)) {
+            return result;
+        }
+
+        List<AddressDTO> addressDTOList = new ArrayList<>();
+
+        for (Object[] data : addressList
+        ) {
+            AddressDTO addressDTO = new AddressDTO();
+            if (data[0] != null) {
+                addressDTO.setId(Long.valueOf(data[0].toString()));
+            }
+
+            if (data[1] != null) {
+                addressDTO.setCountryId(Long.valueOf(data[1].toString()));
+            }
+
+            if (data[2] != null) {
+                addressDTO.setUserType(String.valueOf(data[2]));
+            }
+
+            if (data[3] != null) {
+                addressDTO.setCompany(String.valueOf(data[3]));
+            }
+
+            if (data[4] != null) {
+                addressDTO.setContactName(String.valueOf(data[4]));
+            }
+
+            if (data[5] != null) {
+                addressDTO.setSenderDefault(Boolean.valueOf(data[5].toString()));
+            }
+
+            if (data[6] != null) {
+                addressDTO.setReceipientDefault(Boolean.valueOf(data[6].toString()));
+            }
+
+            if (data[7] != null) {
+                addressDTO.setAddress1(String.valueOf(data[7]));
+            }
+
+            if (data[8] != null) {
+                addressDTO.setAddress2(String.valueOf(data[8]));
+            }
+
+            if (data[9] != null) {
+                addressDTO.setCityId(Long.valueOf(data[9].toString()));
+            }
+
+            if (data[10] != null) {
+                addressDTO.setCityName(String.valueOf(data[10]));
+            }
+
+            if (data[11] != null) {
+                addressDTO.setPostalCode(String.valueOf(data[11]));
+            }
+
+            if (data[12] != null) {
+                addressDTO.setCountryName(String.valueOf(data[12]));
+            }
+
+            if (data[13] != null) {
+                addressDTO.setStateProvince(String.valueOf(data[13]));
+            }
+
+            addressDTOList.add(addressDTO);
+
+        }
+
+        result.setData(addressDTOList);
+        return result;
+    }
+
+    @Override
+    public AddressBook saveAddress(AddressDTO addressDTO, Long userId) {
+        AddressBook addressBook = mapperFacade.map(addressDTO, AddressBook.class);
+        addressBook.setUserId(userId);
+        addressBook.setId(null);
+        addressBookRepository.save(addressBook);
+        return addressBook;
+    }
 }
