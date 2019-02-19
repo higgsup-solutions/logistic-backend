@@ -1,16 +1,13 @@
 package com.higgsup.base.controller;
 
 import com.higgsup.base.dto.CarrierDTO;
-import com.higgsup.base.dto.DimensionDTO;
-import com.higgsup.base.dto.PackageDTO;
+
 import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
-import com.higgsup.base.entity.Carrier;
-import com.higgsup.base.entity.Dimention;
+
 import com.higgsup.base.locale.Translator;
 import com.higgsup.base.log.RequestLogger;
 import com.higgsup.base.service.ICarrierService;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -47,19 +44,6 @@ public class CarrierController {
 
         ResponseMessage<List<CarrierDTO>> responseMessage = new ResponseMessage<>();
         responseMessage.setData(carrierService.getAllCarrierType());
-        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-        iPagedResponse.setResponseMessage(responseMessage);
-
-        return iPagedResponse;
-    }
-
-    @GetMapping("/package")
-    @RequestLogger
-    public IPagedResponse<List<PackageDTO>> getAllPackageType(HttpServletRequest request) {
-        IPagedResponse iPagedResponse = new IPagedResponse();
-
-        ResponseMessage<List<PackageDTO>> responseMessage = new ResponseMessage<>();
-        responseMessage.setData(carrierService.getAllPackageType());
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
         iPagedResponse.setResponseMessage(responseMessage);
 

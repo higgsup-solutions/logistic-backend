@@ -1,7 +1,5 @@
 package com.higgsup.base.dto;
 
-import com.higgsup.base.entity.Carrier;
-import com.higgsup.base.dto.base.IPagedResponse;
 import lombok.Data;
 
 import java.util.List;
@@ -10,4 +8,5 @@ import java.util.List;
 public class CarrierDTO {
     private long id;
     private String carrierType;
+    private List<PackageDTO> packageDTO;
 }

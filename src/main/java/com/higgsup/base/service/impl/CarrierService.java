@@ -31,32 +31,28 @@ public class CarrierService implements ICarrierService {
         List<Carrier> carrierList = carrierRepository.getAllCarrierType();
         for (Carrier carrier : carrierList){
             CarrierDTO carrierDTO = new CarrierDTO();
-            BeanUtils.copyProperties(carrier,carrierDTO);
+
+            carrierDTO.setId(carrier.getId());
+            carrierDTO.setCarrierType(carrier.getCarrierType());
+
+            // get list package entity of current carrier by carrier id
+            Long carrierId = carrier.getId();
+            List<Package> packages =  packageRepository.getpackageByCarrierId(carrierId);
+
+            //copy package entity to package DTO and set it to carrier DTO
+
+            List<PackageDTO> packageDTOList = new ArrayList<>();
+            for (Package packageItem : packages) {
+                PackageDTO packageDTO = new PackageDTO();
+                BeanUtils.copyProperties(packageItem,packageDTO);
+                packageDTOList.add(packageDTO);
+                carrierDTO.setPackageDTO(packageDTOList);
+            }
+
+
             carrierDTOList.add(carrierDTO);
         }
         return carrierDTOList;
     }
 
-    @Override
-    public List<PackageDTO> getAllPackageType() {
-        List<PackageDTO> packageDTOList = new ArrayList<>();
-        List<Package> packageList = packageRepository.findAll();
-        for (Package packageItem : packageList){
-            PackageDTO packageDTO = new PackageDTO();
-
-            //get carrier info  of current package
-            Long carrierId = packageItem.getCarrierId();
-            Carrier carrier = carrierRepository.getOne(carrierId);
-            CarrierDTO carrierDTO = new CarrierDTO();
-            BeanUtils.copyProperties(carrier,carrierDTO);
-
-            //set data for current package dto by package entity and add to list
-            packageDTO.setId(packageItem.getId());
-            packageDTO.setCarrier(carrierDTO);
-            packageDTO.setPackageType(packageItem.getPackageType());
-
-            packageDTOList.add(packageDTO);
-        }
-        return packageDTOList;
-    }
 }
