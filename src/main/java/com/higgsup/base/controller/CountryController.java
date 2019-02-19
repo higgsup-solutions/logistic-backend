@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/countries")
+@RequestMapping("/api/countries")
 @Validated
 public class CountryController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());

@@ -4,7 +4,6 @@ import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
-import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.*;
 import com.higgsup.base.repository.AddressBookRepository;
 import com.higgsup.base.repository.DimentionRepository;
@@ -42,9 +41,7 @@ public class UserService implements IUserService {
 
     private final MapperFacade mapperFacade;
 
-
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRoleRepository = userRoleRepository;
@@ -53,6 +50,7 @@ public class UserService implements IUserService {
         this.addressBookRepository = addressBookRepository;
         this.mapperFacade = mapperFacade;
     }
+
 
     @Override
     public User getByUsername(String username) {
@@ -65,19 +63,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage createUser(UserDTO userDTO) {
-        ResponseMessage result = new ResponseMessage();
+    public User createUser(UserDTO userDTO) {
 
         if (userRepository.existsByEmail(userDTO.getEmail())) {
-            result.setData(false);
-            result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
-            return result;
+            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
         }
 
         if (userRepository.existsByUsername(userDTO.getUserName())) {
-            result.setData(false);
-            result.setMessageCode(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
-            return result;
+            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
         }
 
         User user = new User();
@@ -95,8 +88,7 @@ public class UserService implements IUserService {
         userRole.setUserId(user.getId());
         userRoleService.create(userRole);
 
-        result.setData(true);
-        return result;
+        return user;
     }
 
     @Override
@@ -121,13 +113,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseMessage getAddressList(Long userId) {
-        ResponseMessage result = new ResponseMessage();
-
+    public List<AddressDTO> getAddressList(Long userId) {
         List<Object[]> addressList = userRepository.selectAddressList(userId);
 
         if (CollectionUtils.isEmpty(addressList)) {
-            return result;
+            return null;
         }
 
         List<AddressDTO> addressDTOList = new ArrayList<>();
@@ -195,12 +185,14 @@ public class UserService implements IUserService {
 
         }
 
-        result.setData(addressDTOList);
-        return result;
+        return addressDTOList;
     }
 
     @Override
     public AddressBook saveAddress(AddressDTO addressDTO, Long userId) {
+        if(addressBookRepository.existsByCompanyAndContactNameAndUserId(addressDTO.getCompany(), addressDTO.getContactName(), userId)) {
+            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_ADDRESS.getErrorCode()));
+        }
         AddressBook addressBook = mapperFacade.map(addressDTO, AddressBook.class);
         addressBook.setUserId(userId);
         addressBook.setId(null);
