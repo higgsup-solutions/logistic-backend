@@ -8,5 +8,6 @@ import java.util.List;
 public class CarrierDTO {
     private long id;
     private String carrierType;
+    private Boolean carrierDefault;
     private List<PackageDTO> packageDTO;
 }

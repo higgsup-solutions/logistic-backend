@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -29,6 +30,8 @@ public class CarrierService implements ICarrierService {
     public List<CarrierDTO> getAllCarrierType() {
         List<CarrierDTO> carrierDTOList = new ArrayList<>();
         List<Carrier> carrierList = carrierRepository.getAllCarrierType();
+
+        List<Long> carrierIdList = new ArrayList<>();
         for (Carrier carrier : carrierList){
             CarrierDTO carrierDTO = new CarrierDTO();
 
@@ -40,15 +43,33 @@ public class CarrierService implements ICarrierService {
             List<Package> packages =  packageRepository.getpackageByCarrierId(carrierId);
 
             //copy package entity to package DTO and set it to carrier DTO
-
             List<PackageDTO> packageDTOList = new ArrayList<>();
+            List<Long> packageIdList = new ArrayList<>();
             for (Package packageItem : packages) {
                 PackageDTO packageDTO = new PackageDTO();
                 BeanUtils.copyProperties(packageItem,packageDTO);
+
+                // set default value for package
+                packageIdList.add(packageDTO.getId());
+                Long packageId =  packageDTO.getId();
+                if (packageId == Collections.min(packageIdList)){
+                    packageDTO.setPackageDefault(true);
+                } else {
+                    packageDTO.setPackageDefault(false);
+                }
+
                 packageDTOList.add(packageDTO);
+
                 carrierDTO.setPackageDTO(packageDTOList);
             }
 
+            // set default value for carrier
+            carrierIdList.add(carrierId);
+                if (carrierId == Collections.min(carrierIdList)){
+                    carrierDTO.setCarrierDefault(true);
+                } else {
+                    carrierDTO.setCarrierDefault(false);
+                }
 
             carrierDTOList.add(carrierDTO);
         }
