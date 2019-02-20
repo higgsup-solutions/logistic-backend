@@ -6,6 +6,7 @@ import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.log.RequestLogger;
 import com.higgsup.base.security.model.UserContext;
+import com.higgsup.base.service.ITransactionService;
 import com.higgsup.base.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,11 @@ public class UserController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final IUserService userService;
+    private final ITransactionService transactionService;
 
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, ITransactionService transactionService) {
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping("/dimension")
@@ -60,6 +63,26 @@ public class UserController {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
         result.setData(userService.saveAddress(addressDTO, userContext.getUserId()));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/transactions")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> getTransaction() {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        result.setData(transactionService.getTransactionList(userContext.getUserId()));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping(value = "/transactions/{textSearch}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> getTransaction(@PathVariable("textSearch") String textSearch) {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        result.setData(transactionService.fullTextSearch(userContext.getUserId(), textSearch));
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
