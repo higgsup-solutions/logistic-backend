@@ -25,10 +25,10 @@ public class CountryController {
         this.countryService = countryService;
     }
 
-    @GetMapping(value = "/{id}/cities/{name}")
+    @GetMapping(value = "/{id}/cities")
     @RequestLogger
-    public ResponseEntity<ResponseMessage> getCity(@PathVariable("id") Long countryId, @PathVariable("name") String cityName) {
-        ResponseMessage result = countryService.getCity(countryId, cityName);
+    public ResponseEntity<ResponseMessage> getCity(@PathVariable("id") Long countryId) {
+        ResponseMessage result = countryService.getCity(countryId);
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }

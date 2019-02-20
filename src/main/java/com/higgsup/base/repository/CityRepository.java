@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface CityRepository extends JpaRepository<City, Long> {
 
-    @Query(value = "select ci.id, ci.city_name, ci.postal_code, ci.state_province from city ci, country co where  co.id = :countryId and co.id= ci.country_id and UPPER(ci.city_name) like UPPER(CONCAT('%', :cityName,'%'))", nativeQuery = true)
-    List<Object[]> getCity(@Param("countryId") Long countryId, @Param("cityName") String cityName);
+    @Query(value = "select ci.id, ci.city_name, ci.postal_code, ci.state_province from city ci, country co where  co.id = :countryId and co.id = ci.country_id ", nativeQuery = true)
+    List<Object[]> getCity(@Param("countryId") Long countryId);
 }

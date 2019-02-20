@@ -22,10 +22,10 @@ public class CountryService implements ICountryService {
     }
 
     @Override
-    public ResponseMessage getCity(Long countryId, String cityName) {
+    public ResponseMessage getCity(Long countryId) {
         ResponseMessage result = new ResponseMessage();
 
-        List<Object[]> cityList = cityRepository.getCity(countryId, cityName);
+        List<Object[]> cityList = cityRepository.getCity(countryId);
 
         if(CollectionUtils.isEmpty(cityList)) {
             return result;
