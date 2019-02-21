@@ -7,7 +7,6 @@ public class AddressDTO {
     private Long id;
     private Long countryId;
     private Long cityId;
-    private String userType;
     private String company;
     private String contactName;
     private Boolean senderDefault;
@@ -18,5 +17,7 @@ public class AddressDTO {
     private String countryName;
     private String postalCode;
     private String stateProvince;
+    private String email;
+    private String phoneNumber;
 
 }

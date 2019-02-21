@@ -134,51 +134,55 @@ public class UserService implements IUserService {
             }
 
             if (data[2] != null) {
-                addressDTO.setUserType(String.valueOf(data[2]));
+                addressDTO.setCompany(String.valueOf(data[2]));
             }
 
             if (data[3] != null) {
-                addressDTO.setCompany(String.valueOf(data[3]));
+                addressDTO.setContactName(String.valueOf(data[3]));
             }
 
             if (data[4] != null) {
-                addressDTO.setContactName(String.valueOf(data[4]));
+                addressDTO.setSenderDefault(Boolean.valueOf(data[4].toString()));
             }
 
             if (data[5] != null) {
-                addressDTO.setSenderDefault(Boolean.valueOf(data[5].toString()));
+                addressDTO.setReceipientDefault(Boolean.valueOf(data[5].toString()));
             }
 
             if (data[6] != null) {
-                addressDTO.setReceipientDefault(Boolean.valueOf(data[6].toString()));
+                addressDTO.setAddress1(String.valueOf(data[6]));
             }
 
             if (data[7] != null) {
-                addressDTO.setAddress1(String.valueOf(data[7]));
+                addressDTO.setAddress2(String.valueOf(data[7]));
             }
 
             if (data[8] != null) {
-                addressDTO.setAddress2(String.valueOf(data[8]));
+                addressDTO.setCityId(Long.valueOf(data[8].toString()));
             }
 
             if (data[9] != null) {
-                addressDTO.setCityId(Long.valueOf(data[9].toString()));
+                addressDTO.setCityName(String.valueOf(data[9]));
             }
 
             if (data[10] != null) {
-                addressDTO.setCityName(String.valueOf(data[10]));
+                addressDTO.setPostalCode(String.valueOf(data[10]));
             }
 
             if (data[11] != null) {
-                addressDTO.setPostalCode(String.valueOf(data[11]));
+                addressDTO.setCountryName(String.valueOf(data[11]));
             }
 
             if (data[12] != null) {
-                addressDTO.setCountryName(String.valueOf(data[12]));
+                addressDTO.setStateProvince(String.valueOf(data[12]));
             }
 
             if (data[13] != null) {
-                addressDTO.setStateProvince(String.valueOf(data[13]));
+                addressDTO.setEmail(String.valueOf(data[13]));
+            }
+
+            if (data[14] != null) {
+                addressDTO.setPhoneNumber(String.valueOf(data[14]));
             }
 
             addressDTOList.add(addressDTO);

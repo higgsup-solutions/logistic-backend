@@ -44,9 +44,9 @@ public class UserController {
         return iPagedResponse;
     }
 
-    @GetMapping(value = "/addresses")
+    @GetMapping(value = "/{id}/addresses")
     @RequestLogger
-    public ResponseEntity<ResponseMessage> getAddressList() {
+    public ResponseEntity<ResponseMessage> getAddressList(@PathVariable("id") Long id) {
         ResponseMessage result = new ResponseMessage();
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         result.setData(userService.getAddressList(userContext.getUserId()));
@@ -54,9 +54,9 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping(value = "/addresses/save")
+    @PostMapping(value = "/{id}/addresses")
     @RequestLogger
-    public ResponseEntity<ResponseMessage> saveAddress(@RequestBody AddressDTO addressDTO) {
+    public ResponseEntity<ResponseMessage> saveAddress(@PathVariable("id") Long id, @RequestBody AddressDTO addressDTO) {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
         result.setData(userService.saveAddress(addressDTO, userContext.getUserId()));
