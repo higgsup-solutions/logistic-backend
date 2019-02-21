@@ -5,6 +5,7 @@ import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.entity.*;
+import com.higgsup.base.model.UserAddress;
 import com.higgsup.base.repository.AddressBookRepository;
 import com.higgsup.base.repository.DimentionRepository;
 import com.higgsup.base.repository.UserRepository;
@@ -114,79 +115,20 @@ public class UserService implements IUserService {
 
     @Override
     public List<AddressDTO> getAddressList(Long userId) {
-        List<Object[]> addressList = userRepository.selectAddressList(userId);
+        List<UserAddress> addressList = userRepository.selectAddressList(userId);
 
         if (CollectionUtils.isEmpty(addressList)) {
             return null;
         }
-
         List<AddressDTO> addressDTOList = new ArrayList<>();
-
-        for (Object[] data : addressList
-        ) {
+        for(UserAddress userAddress : addressList){
             AddressDTO addressDTO = new AddressDTO();
-            if (data[0] != null) {
-                addressDTO.setId(Long.valueOf(data[0].toString()));
-            }
-
-            if (data[1] != null) {
-                addressDTO.setCountryId(Long.valueOf(data[1].toString()));
-            }
-
-            if (data[2] != null) {
-                addressDTO.setCompany(String.valueOf(data[2]));
-            }
-
-            if (data[3] != null) {
-                addressDTO.setContactName(String.valueOf(data[3]));
-            }
-
-            if (data[4] != null) {
-                addressDTO.setSenderDefault(Boolean.valueOf(data[4].toString()));
-            }
-
-            if (data[5] != null) {
-                addressDTO.setReceipientDefault(Boolean.valueOf(data[5].toString()));
-            }
-
-            if (data[6] != null) {
-                addressDTO.setAddress1(String.valueOf(data[6]));
-            }
-
-            if (data[7] != null) {
-                addressDTO.setAddress2(String.valueOf(data[7]));
-            }
-
-            if (data[8] != null) {
-                addressDTO.setCityId(Long.valueOf(data[8].toString()));
-            }
-
-            if (data[9] != null) {
-                addressDTO.setCityName(String.valueOf(data[9]));
-            }
-
-            if (data[10] != null) {
-                addressDTO.setPostalCode(String.valueOf(data[10]));
-            }
-
-            if (data[11] != null) {
-                addressDTO.setCountryName(String.valueOf(data[11]));
-            }
-
-            if (data[12] != null) {
-                addressDTO.setStateProvince(String.valueOf(data[12]));
-            }
-
-            if (data[13] != null) {
-                addressDTO.setEmail(String.valueOf(data[13]));
-            }
-
-            if (data[14] != null) {
-                addressDTO.setPhoneNumber(String.valueOf(data[14]));
-            }
-
+            BeanUtils.copyProperties(userAddress, addressDTO);
+            addressDTO.setId(userAddress.getId().longValue());
+            addressDTO.setCityId(userAddress.getId().longValue());
+            addressDTO.setCountryId(userAddress.getId().longValue());
+            addressDTO.setId(userAddress.getId().longValue());
             addressDTOList.add(addressDTO);
-
         }
 
         return addressDTOList;
