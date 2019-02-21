@@ -53,8 +53,8 @@ public class UserService implements IUserService {
 
 
     @Override
-    public User getByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -69,18 +69,9 @@ public class UserService implements IUserService {
             throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
         }
 
-        if (userRepository.existsByUsername(userDTO.getUserName())) {
-            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
-        }
-
         User user = new User();
-        user.setUsername(userDTO.getUserName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setCity(userDTO.getCity());
-        user.setCountry(userDTO.getCountry());
         user.setEmail(userDTO.getEmail());
-        user.setLastName(userDTO.getLastName());
-        user.setFirstName(userDTO.getFirstName());
         userRepository.save(user);
 
         UserRole userRole = new UserRole();

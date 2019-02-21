@@ -20,24 +20,9 @@ public class User {
     @Column(name="ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name="username")
-    private String username;
-    
+
     @Column(name="password")
     private String password;
-
-    @Column(name="last_name")
-    private String lastName;
-
-    @Column(name="first_name")
-    private String firstName;
-
-    @Column(name="country")
-    private String country;
-
-    @Column(name="city")
-    private String city;
 
     @Column(name="email")
     private String email;
@@ -48,16 +33,11 @@ public class User {
 
     public User() { }
 
-    public User(Long id, String username, String password, String lastName, String firstName, String country, String city, String email, List<UserRole> roles) {
+    public User(Long id,  String password, String email, List<UserRole> roles) {
         this.id = id;
-        this.username = username;
         this.password = password;
         this.roles = roles;
         this.email = email;
-        this.city = city;
-        this.country = country;
-        this.lastName = lastName;
-        this.firstName = firstName;
     }
     
  }
