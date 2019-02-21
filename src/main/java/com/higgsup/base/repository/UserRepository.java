@@ -7,20 +7,18 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserCustom {
 
-  @Query("select u from User u left join fetch u.roles r where u.username=:username")
-  User findByUsername(@Param("username") String username);
+    @Query("select u from User u left join fetch u.roles r where u.username=:username")
+    User findByUsername(@Param("username") String username);
 
-  @Query(value = "SELECT * FROM APP_USER WHERE UPPER(username) like 'N%' ", nativeQuery = true)
-  List<User> findAllUsernameStartWithN();
+    @Query(value = "SELECT * FROM APP_USER WHERE UPPER(username) like 'N%' ", nativeQuery = true)
+    List<User> findAllUsernameStartWithN();
 
-  List<User> findUserById(Long id);
+    List<User> findUserById(Long id);
 
-  Boolean existsByUsername(String username);
+    Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
-    @Query(value = "SELECT a.id, a.country_id, a.user_type, a.company, a.contact_name, a.sender_default, a.receipient_default, a.address1, a.address2, a.city_id, ci.city_name, ci.postal_code, co.country_name, ci.state_province  FROM address_book a, country co, city ci  where user_id = :userId and a.city_id = ci.id and a.country_id = co.id", nativeQuery = true)
-    List<Object[]> selectAddressList(@Param("userId") Long userId);
 }
