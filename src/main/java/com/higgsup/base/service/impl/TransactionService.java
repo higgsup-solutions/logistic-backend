@@ -1,7 +1,6 @@
 package com.higgsup.base.service.impl;
 
 import com.higgsup.base.dto.TransactionDTO;
-import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.entity.Transaction;
 import com.higgsup.base.repository.TransactionRepository;
@@ -16,11 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional
 public class TransactionService implements ITransactionService {
+
+    public static final String RESULT_KEY = "result";
+    public static final String TOTAL_ITEM_KEY = "totalItem";
 
     private final TransactionRepository transactionRepository;
     private final MapperFacade mapperFacade;
@@ -31,40 +35,29 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public IPagedResponse<List<TransactionDTO>> getTransactionList(Long userId, int page, int size) {
+    public Map<String, Object> getTransactionList(Long userId, int page, int size) {
         Pageable sortedByShippingDate = PageRequest.of(page, size, Sort.by("shippingDate").descending());
-
         Page<Transaction> transactionList = transactionRepository.findByUserId(userId, sortedByShippingDate);
-        if(transactionList != null && !CollectionUtils.isEmpty(transactionList.getContent())) {
-            List<TransactionDTO> transactionDTOList = mapperFacade.mapAsList(transactionList.getContent(), TransactionDTO.class);
-            IPagedResponse iPagedResponse = new IPagedResponse();
-            ResponseMessage<List<TransactionDTO>> responseMessage = new ResponseMessage<>();
-            responseMessage.setData(transactionDTOList);
-            responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-            iPagedResponse.setPageIndex(page);
-            iPagedResponse.setPageSize(size);
-            iPagedResponse.setResponseMessage(responseMessage);
-            iPagedResponse.setTotalItem(transactionList.getTotalElements());
-            return iPagedResponse;
-        }
-        return null;
+        return processDataAddress(transactionList);
     }
 
     @Override
-    public IPagedResponse<List<TransactionDTO>> fullTextSearch(Long userId, String textSearch, int page, int size) {
+    public Map<String, Object> fullTextSearch(Long userId, String textSearch, int page, int size) {
         Pageable sortedByShippingDate = PageRequest.of(page, size, Sort.by("shipping_date").descending());
         Page<Transaction> transactionList = transactionRepository.fullTextSearch(userId, textSearch, sortedByShippingDate);
-        if(transactionList != null && !CollectionUtils.isEmpty(transactionList.getContent())) {
+        return processDataAddress(transactionList);
+    }
+
+    private Map<String, Object> processDataAddress(Page<Transaction> transactionList) {
+        if (transactionList != null && !CollectionUtils.isEmpty(transactionList.getContent())) {
+            Map<String, Object> result = new HashMap<>();
             List<TransactionDTO> transactionDTOList = mapperFacade.mapAsList(transactionList.getContent(), TransactionDTO.class);
-            IPagedResponse iPagedResponse = new IPagedResponse();
             ResponseMessage<List<TransactionDTO>> responseMessage = new ResponseMessage<>();
             responseMessage.setData(transactionDTOList);
             responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-            iPagedResponse.setPageIndex(page);
-            iPagedResponse.setPageSize(size);
-            iPagedResponse.setResponseMessage(responseMessage);
-            iPagedResponse.setTotalItem(transactionList.getTotalElements());
-            return iPagedResponse;
+            result.put(RESULT_KEY, responseMessage);
+            result.put(TOTAL_ITEM_KEY, transactionList.getTotalElements());
+            return result;
         }
         return null;
     }
