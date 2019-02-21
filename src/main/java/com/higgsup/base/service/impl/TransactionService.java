@@ -52,10 +52,7 @@ public class TransactionService implements ITransactionService {
         if (transactionList != null && !CollectionUtils.isEmpty(transactionList.getContent())) {
             Map<String, Object> result = new HashMap<>();
             List<TransactionDTO> transactionDTOList = mapperFacade.mapAsList(transactionList.getContent(), TransactionDTO.class);
-            ResponseMessage<List<TransactionDTO>> responseMessage = new ResponseMessage<>();
-            responseMessage.setData(transactionDTOList);
-            responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-            result.put(RESULT_KEY, responseMessage);
+            result.put(RESULT_KEY, transactionDTOList);
             result.put(TOTAL_ITEM_KEY, transactionList.getTotalElements());
             return result;
         }
