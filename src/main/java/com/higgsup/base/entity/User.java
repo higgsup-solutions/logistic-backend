@@ -24,6 +24,18 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @Column(name="last_name")
+    private String lastName;
+
+    @Column(name="first_name")
+    private String firstName;
+
+    @Column(name="country")
+    private String country;
+
+    @Column(name="city")
+    private String city;
+
     @Column(name="email")
     private String email;
 
