@@ -11,6 +11,7 @@ import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.tomcat.jni.Address;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -134,5 +136,19 @@ public class UserService implements IUserService {
         addressBook.setId(null);
         addressBookRepository.save(addressBook);
         return addressBook;
+    }
+
+    @Override
+    public AddressDTO updateAddress(AddressDTO addressDTO, Long userId, Long addressId) {
+        Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
+        Optional<Country> countryOptional =   countryRepository.findById(addressDTO.getCountryId());
+        if(!countryOptional.isPresent() || !addressBookOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        } else {
+            AddressBook addressBook = addressBookOptional.get();
+            BeanUtils.copyProperties(addressDTO, addressBook, "id");
+            addressBookRepository.save(addressBook);
+            return addressDTO;
+        }
     }
 }

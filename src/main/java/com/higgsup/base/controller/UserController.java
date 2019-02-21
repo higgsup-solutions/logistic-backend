@@ -63,5 +63,16 @@ public class UserController {
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
+    @PutMapping(value = "/{id}/addresses/{addressId}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> updateAddress(@PathVariable("id") Long id,
+                                                       @PathVariable("addressId") Long addressId,
+                                                       @RequestBody AddressDTO addressDTO) {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        result.setData(userService.updateAddress(addressDTO, userContext.getUserId(), addressId));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
 
 }

@@ -21,4 +21,6 @@ public interface IUserService {
 
     AddressBook saveAddress(AddressDTO addressDTO, Long userId);
 
+    AddressDTO updateAddress(AddressDTO addressDTO, Long userId, Long addressId);
+
 }
