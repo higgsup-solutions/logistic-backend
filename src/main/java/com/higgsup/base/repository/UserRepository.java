@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long>, UserCustom {
 
-    @Query("select u from User u left join fetch u.roles r where u.username=:username")
-    User findByUsername(@Param("username") String username);
+  @Query("select u from User u left join fetch u.roles r where u.username=:username")
+  User findByUsername(@Param("username") String username);
 
-    @Query(value = "SELECT * FROM APP_USER WHERE UPPER(username) like 'N%' ", nativeQuery = true)
-    List<User> findAllUsernameStartWithN();
+  @Query(value = "SELECT * FROM APP_USER WHERE UPPER(username) like 'N%' ", nativeQuery = true)
+  List<User> findAllUsernameStartWithN();
 
-    List<User> findUserById(Long id);
+  List<User> findUserById(Long id);
 
-    Boolean existsByUsername(String username);
+  Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
 
