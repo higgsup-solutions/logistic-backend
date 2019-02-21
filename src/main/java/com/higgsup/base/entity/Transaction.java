@@ -7,12 +7,12 @@ import java.util.Objects;
 
 @Entity
 public class Transaction {
-    private long id;
+    private Long id;
     private Timestamp shippingDate;
     private String carierName;
     private String packageType;
     private String contactSender;
-    private Long trackingNo;
+    private String trackingNo;
     private Integer pieces;
     private Double actualWeight;
     private String destCountry;
@@ -23,14 +23,34 @@ public class Transaction {
     private BigDecimal dtpAdminFee;
     private BigDecimal totalCharge;
 
+    private String contentType;
+
+    private String senderCountryName;
+    private String senderCompany;
+    private String senderContactName;
+    private String senderAddress;
+    private String senderCityName;
+    private String senderStateProvince;
+    private String senderPostalCode;
+
+    private String recipientCountryName;
+    private String recipientCompany;
+    private String recipientContactName;
+    private String recipientAddress;
+    private String recipientCityName;
+    private String recipientStateProvince;
+    private String recipientPostalCode;
+
+    private Long userId;
+
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -76,11 +96,11 @@ public class Transaction {
 
     @Basic
     @Column(name = "tracking_no", nullable = true)
-    public Long getTrackingNo() {
+    public String getTrackingNo() {
         return trackingNo;
     }
 
-    public void setTrackingNo(Long trackingNo) {
+    public void setTrackingNo(String trackingNo) {
         this.trackingNo = trackingNo;
     }
 
@@ -172,6 +192,134 @@ public class Transaction {
 
     public void setTotalCharge(BigDecimal totalCharge) {
         this.totalCharge = totalCharge;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getSenderCountryName() {
+        return senderCountryName;
+    }
+
+    public void setSenderCountryName(String senderCountryName) {
+        this.senderCountryName = senderCountryName;
+    }
+
+    public String getSenderCompany() {
+        return senderCompany;
+    }
+
+    public void setSenderCompany(String senderCompany) {
+        this.senderCompany = senderCompany;
+    }
+
+    public String getSenderContactName() {
+        return senderContactName;
+    }
+
+    public void setSenderContactName(String senderContactName) {
+        this.senderContactName = senderContactName;
+    }
+
+    public String getSenderAddress() {
+        return senderAddress;
+    }
+
+    public void setSenderAddress(String senderAddress) {
+        this.senderAddress = senderAddress;
+    }
+
+    public String getSenderCityName() {
+        return senderCityName;
+    }
+
+    public void setSenderCityName(String senderCityName) {
+        this.senderCityName = senderCityName;
+    }
+
+    public String getSenderStateProvince() {
+        return senderStateProvince;
+    }
+
+    public void setSenderStateProvince(String senderStateProvince) {
+        this.senderStateProvince = senderStateProvince;
+    }
+
+    public String getSenderPostalCode() {
+        return senderPostalCode;
+    }
+
+    public void setSenderPostalCode(String senderPostalCode) {
+        this.senderPostalCode = senderPostalCode;
+    }
+
+    public String getRecipientCountryName() {
+        return recipientCountryName;
+    }
+
+    public void setRecipientCountryName(String recipientCountryName) {
+        this.recipientCountryName = recipientCountryName;
+    }
+
+    public String getRecipientCompany() {
+        return recipientCompany;
+    }
+
+    public void setRecipientCompany(String recipientCompany) {
+        this.recipientCompany = recipientCompany;
+    }
+
+    public String getRecipientContactName() {
+        return recipientContactName;
+    }
+
+    public void setRecipientContactName(String recipientContactName) {
+        this.recipientContactName = recipientContactName;
+    }
+
+    public String getRecipientAddress() {
+        return recipientAddress;
+    }
+
+    public void setRecipientAddress(String recipientAddress) {
+        this.recipientAddress = recipientAddress;
+    }
+
+    public String getRecipientCityName() {
+        return recipientCityName;
+    }
+
+    public void setRecipientCityName(String recipientCityName) {
+        this.recipientCityName = recipientCityName;
+    }
+
+    public String getRecipientStateProvince() {
+        return recipientStateProvince;
+    }
+
+    public void setRecipientStateProvince(String recipientStateProvince) {
+        this.recipientStateProvince = recipientStateProvince;
+    }
+
+    public String getRecipientPostalCode() {
+        return recipientPostalCode;
+    }
+
+    public void setRecipientPostalCode(String recipientPostalCode) {
+        this.recipientPostalCode = recipientPostalCode;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

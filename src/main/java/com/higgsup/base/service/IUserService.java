@@ -9,7 +9,7 @@ import com.higgsup.base.entity.User;
 import java.util.List;
 
 public interface IUserService {
-    User getByUsername(String username);
+    User getByEmail(String email);
 
     List<User> getUser();
 
