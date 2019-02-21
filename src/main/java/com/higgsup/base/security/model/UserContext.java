@@ -6,6 +6,7 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 public class UserContext {
+
     private final Long userId;
     private final String email;
     private final List<GrantedAuthority> authorities;
