@@ -2,14 +2,14 @@ package com.higgsup.base.repository.impl;
 
 import com.higgsup.base.model.UserAddress;
 import com.higgsup.base.repository.result_mapper.JpaResultConverter;
-import com.higgsup.base.repository.UserCustom;
+import com.higgsup.base.repository.UserRepositoryCustom;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
-public class UserRepositoryImpl implements UserCustom {
+public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @PersistenceContext
     private EntityManager em;

@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserCustom  {
+public interface UserRepositoryCustom {
     List<UserAddress> selectAddressList(@Param("userId") Long userId);
 }
