@@ -6,7 +6,6 @@ import lombok.Data;
 public class AddressDTO {
     private Long id;
     private Long countryId;
-    private Long cityId;
     private String company;
     private String contactName;
     private Boolean senderDefault;

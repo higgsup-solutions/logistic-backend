@@ -6,10 +6,7 @@ import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.entity.*;
 import com.higgsup.base.model.UserAddress;
-import com.higgsup.base.repository.AddressBookRepository;
-import com.higgsup.base.repository.DimentionRepository;
-import com.higgsup.base.repository.UserRepository;
-import com.higgsup.base.repository.UserRoleRepository;
+import com.higgsup.base.repository.*;
 import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
@@ -40,15 +37,18 @@ public class UserService implements IUserService {
 
     private final AddressBookRepository addressBookRepository;
 
+    private final CountryRepository countryRepository;
+
     private final MapperFacade mapperFacade;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository,  CountryRepository countryRepository, MapperFacade mapperFacade) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.dimentionRepository = dimentionRepository;
         this.addressBookRepository = addressBookRepository;
+        this.countryRepository = countryRepository;
         this.mapperFacade = mapperFacade;
     }
 
@@ -116,7 +116,6 @@ public class UserService implements IUserService {
             AddressDTO addressDTO = new AddressDTO();
             BeanUtils.copyProperties(userAddress, addressDTO);
             addressDTO.setId(userAddress.getId().longValue());
-            addressDTO.setCityId(userAddress.getId().longValue());
             addressDTO.setCountryId(userAddress.getId().longValue());
             addressDTO.setId(userAddress.getId().longValue());
             addressDTOList.add(addressDTO);

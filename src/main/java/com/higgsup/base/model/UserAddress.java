@@ -12,7 +12,6 @@ public class UserAddress {
     private Boolean receipientDefault;
     private String address1;
     private String address2;
-    private BigInteger cityId;
     private String cityName;
     private String postalCode;
     private String countryName;
@@ -21,7 +20,10 @@ public class UserAddress {
     private String phoneNumber;
 
 
-    public UserAddress(BigInteger id, BigInteger countryId, String company, String contactName, Boolean senderDefault, Boolean receipientDefault, String address1, String address2, BigInteger cityId, String cityName, String postalCode, String countryName, String stateProvince, String email, String phoneNumber) {
+    public UserAddress(BigInteger id, BigInteger countryId, String company,
+                       String contactName, Boolean senderDefault, Boolean receipientDefault, String address1,
+                       String address2, String cityName, String postalCode,
+                       String countryName, String stateProvince, String email, String phoneNumber) {
         this.id = id;
         this.countryId = countryId;
         this.company = company;
@@ -30,7 +32,7 @@ public class UserAddress {
         this.receipientDefault = receipientDefault;
         this.address1 = address1;
         this.address2 = address2;
-        this.cityId = cityId;
+
         this.cityName = cityName;
         this.postalCode = postalCode;
         this.countryName = countryName;
@@ -101,14 +103,6 @@ public class UserAddress {
 
     public void setAddress2(String address2) {
         this.address2 = address2;
-    }
-
-    public BigInteger getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(BigInteger cityId) {
-        this.cityId = cityId;
     }
 
     public String getCityName() {
