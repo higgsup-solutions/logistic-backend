@@ -8,6 +8,7 @@ import com.higgsup.base.service.ITransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,18 +30,16 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @GetMapping(value = "/transactions", params = {"page", "size"})
+    @GetMapping(value = "/search")
     @RequestLogger
-    public IPagedResponse<List<TransactionDTO>> getTransaction(@RequestParam("page") int page, @RequestParam("size") int size) {
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return transactionService.getTransactionList(userContext.getUserId(), page, size);
-    }
-
-    @GetMapping(value = "/transactions/search", params = {"textSearch", "page", "size"})
-    @RequestLogger
-    public IPagedResponse<List<TransactionDTO>> getTransaction(@RequestParam("textSearch") String textSearch, @RequestParam("page") int page, @RequestParam("size") int size) {
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return transactionService.fullTextSearch(userContext.getUserId(), textSearch, page, size);
+    public IPagedResponse<List<TransactionDTO>> getTransaction(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam(value ="textSearch", required = false) String textSearch) {
+        if(textSearch == null || StringUtils.isEmpty(textSearch) ) {
+            UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return transactionService.getTransactionList(userContext.getUserId(), page, size);
+        } else {
+            UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return transactionService.fullTextSearch(userContext.getUserId(), textSearch, page, size);
+        }
     }
 
 }
