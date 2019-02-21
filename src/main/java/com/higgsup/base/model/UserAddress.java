@@ -6,7 +6,6 @@ public class UserAddress {
 
     private BigInteger id;
     private BigInteger countryId;
-    private String userType;
     private String company;
     private String contactName;
     private Boolean senderDefault;
@@ -18,12 +17,13 @@ public class UserAddress {
     private String postalCode;
     private String countryName;
     private String stateProvince;
+    private String email;
+    private String phoneNumber;
 
 
-    public UserAddress(BigInteger id, BigInteger countryId, String userType, String company, String contactName, Boolean senderDefault, Boolean receipientDefault, String address1, String address2, BigInteger cityId, String cityName, String postalCode, String countryName, String stateProvince) {
+    public UserAddress(BigInteger id, BigInteger countryId, String company, String contactName, Boolean senderDefault, Boolean receipientDefault, String address1, String address2, BigInteger cityId, String cityName, String postalCode, String countryName, String stateProvince, String email, String phoneNumber) {
         this.id = id;
         this.countryId = countryId;
-        this.userType = userType;
         this.company = company;
         this.contactName = contactName;
         this.senderDefault = senderDefault;
@@ -35,6 +35,8 @@ public class UserAddress {
         this.postalCode = postalCode;
         this.countryName = countryName;
         this.stateProvince = stateProvince;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     public BigInteger getId() {
@@ -51,14 +53,6 @@ public class UserAddress {
 
     public void setCountryId(BigInteger countryId) {
         this.countryId = countryId;
-    }
-
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
     }
 
     public String getCompany() {
@@ -147,5 +141,21 @@ public class UserAddress {
 
     public void setStateProvince(String stateProvince) {
         this.stateProvince = stateProvince;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
