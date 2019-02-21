@@ -10,13 +10,14 @@ public class AddressBook {
     private Long userId;
     private Long countryId;
     private Long cityId;
-    private String userType;
     private String company;
     private String contactName;
     private Boolean senderDefault;
     private Boolean receipientDefault;
     private String address1;
     private String address2;
+    private String email;
+    private String phoneNumber;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -57,16 +58,6 @@ public class AddressBook {
 
     public void setCityId(Long cityId) {
         this.cityId = cityId;
-    }
-
-    @Basic
-    @Column(name = "user_type", nullable = true, length = 2)
-    public String getUserType() {
-        return userType;
-    }
-
-    public void setUserType(String userType) {
-        this.userType = userType;
     }
 
     @Basic
@@ -129,6 +120,22 @@ public class AddressBook {
         this.address2 = address2;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -138,7 +145,6 @@ public class AddressBook {
                 Objects.equals(userId, that.userId) &&
                 Objects.equals(countryId, that.countryId) &&
                 Objects.equals(cityId, that.cityId) &&
-                Objects.equals(userType, that.userType) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(contactName, that.contactName) &&
                 Objects.equals(senderDefault, that.senderDefault) &&
@@ -149,6 +155,6 @@ public class AddressBook {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, countryId, cityId, userType, company, contactName, senderDefault, receipientDefault, address1, address2);
+        return Objects.hash(id, userId, countryId, cityId, company, contactName, senderDefault, receipientDefault, address1, address2);
     }
 }
