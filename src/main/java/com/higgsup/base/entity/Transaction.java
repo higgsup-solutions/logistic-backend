@@ -41,6 +41,7 @@ public class Transaction {
     private String senderCityName;
     private String senderStateProvince;
     private String senderPostalCode;
+    private String senderPhoneNumber;
 
     private String recipientCountryName;
     private String recipientCompany;
@@ -50,6 +51,7 @@ public class Transaction {
     private String recipientCityName;
     private String recipientStateProvince;
     private String recipientPostalCode;
+    private String recipientPhoneNumber;
 
     private Long userId;
 
@@ -396,7 +398,21 @@ public class Transaction {
         this.gst = gst;
     }
 
+    public String getSenderPhoneNumber() {
+        return senderPhoneNumber;
+    }
 
+    public void setSenderPhoneNumber(String senderPhoneNumber) {
+        this.senderPhoneNumber = senderPhoneNumber;
+    }
+
+    public String getRecipientPhoneNumber() {
+        return recipientPhoneNumber;
+    }
+
+    public void setRecipientPhoneNumber(String recipientPhoneNumber) {
+        this.recipientPhoneNumber = recipientPhoneNumber;
+    }
 
     @Override
     public boolean equals(Object o) {
