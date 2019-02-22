@@ -9,7 +9,7 @@ public class AddressBook {
     private Long id;
     private Long userId;
     private Long countryId;
-    private Long cityId;
+    private String cityName;
     private String company;
     private String contactName;
     private Boolean senderDefault;
@@ -18,6 +18,8 @@ public class AddressBook {
     private String address2;
     private String email;
     private String phoneNumber;
+    private String stateProvince;
+    private String postalCode;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -51,13 +53,13 @@ public class AddressBook {
     }
 
     @Basic
-    @Column(name = "city_id", nullable = true)
-    public Long getCityId() {
-        return cityId;
+    @Column(name = "city_name", nullable = true)
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setCityId(Long cityId) {
-        this.cityId = cityId;
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     @Basic
@@ -136,6 +138,26 @@ public class AddressBook {
         this.phoneNumber = phoneNumber;
     }
 
+    @Basic
+    @Column(name = "state", nullable = true, length = 225)
+    public String getStateProvince() {
+        return stateProvince;
+    }
+
+    public void setStateProvince(String state) {
+        this.stateProvince = state;
+    }
+
+    @Basic
+    @Column(name = "postal_code", nullable = true, length = 225)
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -144,7 +166,7 @@ public class AddressBook {
         return id == that.id &&
                 Objects.equals(userId, that.userId) &&
                 Objects.equals(countryId, that.countryId) &&
-                Objects.equals(cityId, that.cityId) &&
+                Objects.equals(cityName, that.cityName) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(contactName, that.contactName) &&
                 Objects.equals(senderDefault, that.senderDefault) &&
@@ -155,6 +177,6 @@ public class AddressBook {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, countryId, cityId, company, contactName, senderDefault, receipientDefault, address1, address2);
+        return Objects.hash(id, userId, countryId, cityName, company, contactName, senderDefault, receipientDefault, address1, address2);
     }
 }

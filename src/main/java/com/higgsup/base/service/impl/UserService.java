@@ -5,14 +5,13 @@ import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.entity.*;
-import com.higgsup.base.repository.AddressBookRepository;
-import com.higgsup.base.repository.DimentionRepository;
-import com.higgsup.base.repository.UserRepository;
-import com.higgsup.base.repository.UserRoleRepository;
+import com.higgsup.base.model.UserAddress;
+import com.higgsup.base.repository.*;
 import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.tomcat.jni.Address;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -39,22 +39,25 @@ public class UserService implements IUserService {
 
     private final AddressBookRepository addressBookRepository;
 
+    private final CountryRepository countryRepository;
+
     private final MapperFacade mapperFacade;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository, MapperFacade mapperFacade) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository,  CountryRepository countryRepository, MapperFacade mapperFacade) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRoleRepository = userRoleRepository;
         this.userRoleService = userRoleService;
         this.dimentionRepository = dimentionRepository;
         this.addressBookRepository = addressBookRepository;
+        this.countryRepository = countryRepository;
         this.mapperFacade = mapperFacade;
     }
 
 
     @Override
-    public User getByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User getByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     @Override
@@ -69,18 +72,9 @@ public class UserService implements IUserService {
             throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
         }
 
-        if (userRepository.existsByUsername(userDTO.getUserName())) {
-            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_USERNAME.getErrorCode()));
-        }
-
         User user = new User();
-        user.setUsername(userDTO.getUserName());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        user.setCity(userDTO.getCity());
-        user.setCountry(userDTO.getCountry());
         user.setEmail(userDTO.getEmail());
-        user.setLastName(userDTO.getLastName());
-        user.setFirstName(userDTO.getFirstName());
         userRepository.save(user);
 
         UserRole userRole = new UserRole();
@@ -92,10 +86,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<DimensionDTO> getTop5Dimension() {
+    public List<DimensionDTO> getDimensions(Long userId, Integer dimensionNumber) {
         List<DimensionDTO> dimensionDTOS = new ArrayList<>();
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Dimention> dimentions = dimentionRepository.getTop5Dimention(userContext.getUserId());
+        List<Dimention> dimentions = dimentionRepository.getDimentions(userId, dimensionNumber);
 
         // convert from dimension entity to dimention DTO by bean copy
         for (Dimention dimention : dimentions) {
@@ -109,79 +102,19 @@ public class UserService implements IUserService {
 
     @Override
     public List<AddressDTO> getAddressList(Long userId) {
-        List<Object[]> addressList = userRepository.selectAddressList(userId);
+        List<UserAddress> addressList = userRepository.selectAddressList(userId);
 
         if (CollectionUtils.isEmpty(addressList)) {
             return null;
         }
-
         List<AddressDTO> addressDTOList = new ArrayList<>();
-
-        for (Object[] data : addressList
-        ) {
+        for(UserAddress userAddress : addressList){
             AddressDTO addressDTO = new AddressDTO();
-            if (data[0] != null) {
-                addressDTO.setId(Long.valueOf(data[0].toString()));
-            }
-
-            if (data[1] != null) {
-                addressDTO.setCountryId(Long.valueOf(data[1].toString()));
-            }
-
-            if (data[2] != null) {
-                addressDTO.setCompany(String.valueOf(data[2]));
-            }
-
-            if (data[3] != null) {
-                addressDTO.setContactName(String.valueOf(data[3]));
-            }
-
-            if (data[4] != null) {
-                addressDTO.setSenderDefault(Boolean.valueOf(data[4].toString()));
-            }
-
-            if (data[5] != null) {
-                addressDTO.setReceipientDefault(Boolean.valueOf(data[5].toString()));
-            }
-
-            if (data[6] != null) {
-                addressDTO.setAddress1(String.valueOf(data[6]));
-            }
-
-            if (data[7] != null) {
-                addressDTO.setAddress2(String.valueOf(data[7]));
-            }
-
-            if (data[8] != null) {
-                addressDTO.setCityId(Long.valueOf(data[8].toString()));
-            }
-
-            if (data[9] != null) {
-                addressDTO.setCityName(String.valueOf(data[9]));
-            }
-
-            if (data[10] != null) {
-                addressDTO.setPostalCode(String.valueOf(data[10]));
-            }
-
-            if (data[11] != null) {
-                addressDTO.setCountryName(String.valueOf(data[11]));
-            }
-
-            if (data[12] != null) {
-                addressDTO.setStateProvince(String.valueOf(data[12]));
-            }
-
-            if (data[13] != null) {
-                addressDTO.setEmail(String.valueOf(data[13]));
-            }
-
-            if (data[14] != null) {
-                addressDTO.setPhoneNumber(String.valueOf(data[14]));
-            }
-
+            BeanUtils.copyProperties(userAddress, addressDTO);
+            addressDTO.setId(userAddress.getId().longValue());
+            addressDTO.setCountryId(userAddress.getId().longValue());
+            addressDTO.setId(userAddress.getId().longValue());
             addressDTOList.add(addressDTO);
-
         }
 
         return addressDTOList;
@@ -197,5 +130,53 @@ public class UserService implements IUserService {
         addressBook.setId(null);
         addressBookRepository.save(addressBook);
         return addressBook;
+    }
+
+    @Override
+    public AddressDTO updateAddress(AddressDTO addressDTO, Long userId, Long addressId) {
+        Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
+        Optional<Country> countryOptional =   countryRepository.findById(addressDTO.getCountryId());
+        if(!countryOptional.isPresent() || !addressBookOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        } else {
+            AddressBook addressBook = addressBookOptional.get();
+            BeanUtils.copyProperties(addressDTO, addressBook, "id");
+            addressBookRepository.save(addressBook);
+            return addressDTO;
+        }
+    }
+
+    @Override
+    public void delete(Long userId, Long addressId){
+        Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
+        if(!addressBookOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            addressBookRepository.delete(addressBookOptional.get());
+        }
+    }
+    @Override
+    public UserDTO findUser(Long userId){
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(userOptional.get(), userDTO);
+            return userDTO;
+        }
+    }
+
+    @Override
+    public UserDTO updateUser(Long userId, UserDTO userDTO) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            User user = userOptional.get();
+            BeanUtils.copyProperties(userDTO, user, "id", "email", "password");
+            userRepository.save(user);
+            return userDTO;
+        }
     }
 }

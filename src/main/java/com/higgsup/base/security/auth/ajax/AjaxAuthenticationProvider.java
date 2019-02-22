@@ -43,16 +43,16 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
       AuthenticationException {
     Assert.notNull(authentication, "No authentication data provided");
 
-    String username = (String) authentication.getPrincipal();
+    String email = (String) authentication.getPrincipal();
     String password = (String) authentication.getCredentials();
 
-    User user = userService.getByUsername(username);
+    User user = userService.getByEmail(email);
     if (user == null)
-      throw new UsernameNotFoundException("User not found: " + username);
+      throw new UsernameNotFoundException("Email not found: " + email);
 
     if (!encoder.matches(password, user.getPassword())) {
       throw new BadCredentialsException(
-          "Authentication Failed. Username or Password not valid.");
+          "Authentication Failed. Email or Password not valid.");
     }
 
     if (user.getRoles() == null)
@@ -65,7 +65,7 @@ public class AjaxAuthenticationProvider implements AuthenticationProvider {
         .collect(Collectors.toList());
 
     UserContext userContext = UserContext
-        .create(user.getId(), user.getUsername(), authorities);
+        .create(user.getId(), user.getEmail(), authorities);
 
     return new UsernamePasswordAuthenticationToken(userContext, null,
         userContext.getAuthorities());

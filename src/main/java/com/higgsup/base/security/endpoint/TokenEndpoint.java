@@ -86,7 +86,7 @@ public class TokenEndpoint {
         }
 
         String subject = refreshToken.getSubject();
-        User user = userService.getByUsername(subject);
+        User user = userService.getByEmail(subject);
         if (user == null)
             throw new UsernameNotFoundException("User not found: " + subject);
 
@@ -95,7 +95,7 @@ public class TokenEndpoint {
                 .map(authority -> new SimpleGrantedAuthority(authority.getRole().authority()))
                 .collect(Collectors.toList());
 
-        UserContext userContext = UserContext.create(user.getId(), user.getUsername(), authorities);
+        UserContext userContext = UserContext.create(user.getId(), user.getEmail(), authorities);
 
         AccessJwtToken accessJwtToken = tokenFactory.createAccessJwtToken(userContext);
 

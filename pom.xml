@@ -14,7 +14,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>base</name>
     <description>Base project for Spring Boot</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>11</java.version>

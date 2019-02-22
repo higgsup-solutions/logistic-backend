@@ -59,4 +59,7 @@ CREATE TABLE `user_token`  (
   PRIMARY KEY (`user_id`) USING BTREE
 ) ENGINE = MyISAM CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
+ALTER TABLE transaction ADD FULLTEXT (carier_name,package_type,contact_sender,tracking_no,content_type,recipient_address,recipient_city_name,recipient_company,recipient_contact_name,recipient_country_name,sender_address,sender_city_name,sender_company,sender_contact_name,sender_country_name);
+
+
 SET FOREIGN_KEY_CHECKS = 1;
