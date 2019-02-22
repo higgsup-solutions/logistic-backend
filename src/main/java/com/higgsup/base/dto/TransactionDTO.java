@@ -41,6 +41,7 @@ public class TransactionDTO {
     private String senderCityName;
     private String senderStateProvince;
     private String senderPostalCode;
+    private String senderPhoneNumber;
 
     private String recipientCountryName;
     private String recipientCompany;
@@ -50,4 +51,5 @@ public class TransactionDTO {
     private String recipientCityName;
     private String recipientStateProvince;
     private String recipientPostalCode;
+    private String recipientPhoneNumber;
 }
