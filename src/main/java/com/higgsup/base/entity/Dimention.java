@@ -9,7 +9,7 @@ public class Dimention {
     private long id;
     private Long userId;
     private Double length;
-    private Double weight;
+    private Double width;
     private Double height;
     private Byte dimentionDefault;
     private Timestamp lastUpdated;
@@ -46,13 +46,13 @@ public class Dimention {
     }
 
     @Basic
-    @Column(name = "weight", nullable = true, precision = 0)
-    public Double getWeight() {
-        return weight;
+    @Column(name = "width", nullable = true, precision = 0)
+    public Double getWidth() {
+        return width;
     }
 
-    public void setWeight(Double weight) {
-        this.weight = weight;
+    public void setWidth(Double width) {
+        this.width = width;
     }
 
     @Basic
@@ -93,13 +93,13 @@ public class Dimention {
         return id == dimention.id &&
                 Objects.equals(userId, dimention.userId) &&
                 Objects.equals(length, dimention.length) &&
-                Objects.equals(weight, dimention.weight) &&
+                Objects.equals(width, dimention.width) &&
                 Objects.equals(height, dimention.height) &&
                 Objects.equals(dimentionDefault, dimention.dimentionDefault);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, length, weight, height, dimentionDefault);
+        return Objects.hash(id, userId, length, width, height, dimentionDefault);
     }
 }

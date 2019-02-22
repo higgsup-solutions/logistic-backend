@@ -86,19 +86,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<DimensionDTO> getTop5Dimension() {
+    public List<DimensionDTO> getDimensions(Long userId, Integer dimensionNumber) {
         List<DimensionDTO> dimensionDTOS = new ArrayList<>();
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Dimention> dimentions = dimentionRepository.getTop5Dimention(userContext.getUserId());
+        List<Dimention> dimentions = dimentionRepository.getDimentions(userId, dimensionNumber);
 
         // convert from dimension entity to dimention DTO by bean copy
         for (Dimention dimention : dimentions) {
             DimensionDTO dimensionDTO = new DimensionDTO();
-            if (dimention.getDimentionDefault() == 0) {
-                dimensionDTO.setDimentionDefault(false);
-            } else {
-                dimensionDTO.setDimentionDefault(true);
-            }
             BeanUtils.copyProperties(dimention, dimensionDTO);
             dimensionDTOS.add(dimensionDTO);
 

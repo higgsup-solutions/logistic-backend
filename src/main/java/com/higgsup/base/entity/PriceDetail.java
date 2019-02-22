@@ -9,10 +9,6 @@ import java.util.Objects;
 public class PriceDetail {
     private long id;
     private Long packageId;
-    private BigDecimal addressFromId;
-    private BigDecimal addressToId;
-    private Integer zoneNo;
-    private BigDecimal zonePrice;
     private BigDecimal baseRate1;
     private BigDecimal baseRate2;
     private BigDecimal baseRate3;
@@ -39,46 +35,6 @@ public class PriceDetail {
 
     public void setPackageId(Long packageId) {
         this.packageId = packageId;
-    }
-
-    @Basic
-    @Column(name = "address_from_id", nullable = true, length = 225)
-    public BigDecimal getAddressFromId() {
-        return addressFromId;
-    }
-
-    public void setAddressFromId(BigDecimal addressFromId) {
-        this.addressFromId = addressFromId;
-    }
-
-    @Basic
-    @Column(name = "address_to_id", nullable = true, length = 225)
-    public BigDecimal getAddressToId() {
-        return addressToId;
-    }
-
-    public void setAddressToId(BigDecimal addressToId) {
-        this.addressToId = addressToId;
-    }
-
-    @Basic
-    @Column(name = "zone_no", nullable = true)
-    public Integer getZoneNo() {
-        return zoneNo;
-    }
-
-    public void setZoneNo(Integer zoneNo) {
-        this.zoneNo = zoneNo;
-    }
-
-    @Basic
-    @Column(name = "zone_price", nullable = true, precision = 2)
-    public BigDecimal getZonePrice() {
-        return zonePrice;
-    }
-
-    public void setZonePrice(BigDecimal zonePrice) {
-        this.zonePrice = zonePrice;
     }
 
     @Basic
@@ -148,10 +104,6 @@ public class PriceDetail {
         PriceDetail that = (PriceDetail) o;
         return id == that.id &&
                 Objects.equals(packageId, that.packageId) &&
-                Objects.equals(addressFromId, that.addressFromId) &&
-                Objects.equals(addressToId, that.addressToId) &&
-                Objects.equals(zoneNo, that.zoneNo) &&
-                Objects.equals(zonePrice, that.zonePrice) &&
                 Objects.equals(baseRate1, that.baseRate1) &&
                 Objects.equals(baseRate2, that.baseRate2) &&
                 Objects.equals(baseRate3, that.baseRate3) &&
@@ -162,6 +114,6 @@ public class PriceDetail {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, packageId, addressFromId, addressToId, zoneNo, zonePrice, baseRate1, baseRate2, baseRate3, baseRate4, contentType, dangerousCharge);
+        return Objects.hash(id, packageId, baseRate1, baseRate2, baseRate3, baseRate4, contentType, dangerousCharge);
     }
 }

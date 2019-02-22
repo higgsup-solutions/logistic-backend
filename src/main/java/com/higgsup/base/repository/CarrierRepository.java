@@ -10,4 +10,5 @@ import java.util.List;
 public interface CarrierRepository extends JpaRepository<Carrier, Long> {
     @Query(value = "SELECT * from carrier", nativeQuery = true)
     List<Carrier> getAllCarrierType();
+    Carrier findCarrierById(Long id);
 }
