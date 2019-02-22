@@ -151,4 +151,38 @@ public class UserService implements IUserService {
             return addressDTO;
         }
     }
+
+    @Override
+    public void delete(Long userId, Long addressId){
+        Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
+        if(!addressBookOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            addressBookRepository.delete(addressBookOptional.get());
+        }
+    }
+    @Override
+    public UserDTO findUser(Long userId){
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            UserDTO userDTO = new UserDTO();
+            BeanUtils.copyProperties(userOptional.get(), userDTO);
+            return userDTO;
+        }
+    }
+
+    @Override
+    public UserDTO updateUser(Long userId, UserDTO userDTO) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            User user = userOptional.get();
+            BeanUtils.copyProperties(userDTO, user, "id", "email", "password");
+            userRepository.save(user);
+            return userDTO;
+        }
+    }
 }

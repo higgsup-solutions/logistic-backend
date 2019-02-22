@@ -39,6 +39,13 @@ public class User {
     @Column(name="email")
     private String email;
 
+
+    @Column(name="address")
+    private String address;
+
+    @Column(name="language")
+    private String language;
+
     @OneToMany
     @JoinColumn(name="APP_USER_ID", referencedColumnName="ID")
     private List<UserRole> roles;

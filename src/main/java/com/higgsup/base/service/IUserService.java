@@ -23,4 +23,10 @@ public interface IUserService {
 
     AddressDTO updateAddress(AddressDTO addressDTO, Long userId, Long addressId);
 
+    void delete(Long userId, Long addressId);
+
+    UserDTO findUser(Long userId);
+
+    UserDTO updateUser(Long userId, UserDTO userDTO);
+
 }

@@ -2,6 +2,7 @@ package com.higgsup.base.controller;
 
 import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
+import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.log.RequestLogger;
@@ -30,6 +31,26 @@ public class UserController {
     public UserController(IUserService userService) {
         this.userService = userService;
     }
+
+    @GetMapping("/{id}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> getUserInfo(@PathVariable("id") Long id) {
+        ResponseMessage<UserDTO> responseMessage = new ResponseMessage<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.findUser(userContext.getUserId()));
+        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(responseMessage);
+    }
+    @PutMapping("/{id}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> updateUser(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
+        ResponseMessage<UserDTO> responseMessage = new ResponseMessage<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.updateUser(userContext.getUserId(), userDTO));
+        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(responseMessage);
+    }
+
 
     @GetMapping("/dimension")
     @RequestLogger
@@ -71,6 +92,17 @@ public class UserController {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
         result.setData(userService.updateAddress(addressDTO, userContext.getUserId(), addressId));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping(value = "/{id}/addresses/{addressId}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> deleteAddress(@PathVariable("id") Long id,
+                                                         @PathVariable("addressId") Long addressId) {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        userService.delete(userContext.getUserId(), addressId);
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
