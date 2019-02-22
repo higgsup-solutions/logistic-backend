@@ -16,6 +16,8 @@ public enum ErrorCode {
     JWT_TOKEN_EXPIRED(11),
     DUPPLICATE_EMAIL(12),
     DUPPLICATE_USERNAME(13),
+    USER_NOT_FOUND(15),
+    NEW_PASSWORD_OR_NEW_PASSWORD_INVALID(16),
     DUPPLICATE_ADDRESS(14);
 
     private int errorCode;

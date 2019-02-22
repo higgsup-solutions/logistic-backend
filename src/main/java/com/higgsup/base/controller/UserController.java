@@ -6,6 +6,7 @@ import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.log.RequestLogger;
+import com.higgsup.base.security.auth.ajax.ChangePassRequest;
 import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserService;
 import org.slf4j.Logger;
@@ -106,5 +107,24 @@ public class UserController {
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
+    @DeleteMapping(value = "/{id}/dimension/{dimensionId}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> deleteDimension(@PathVariable("id") Long id,
+                                                         @PathVariable("dimensionId") Long dimensionId) {
 
+        ResponseMessage result = new ResponseMessage();
+        userService.deleteDimension(dimensionId);
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+    @PostMapping("/{id}/change_pass")
+    public ResponseEntity<ResponseMessage> changePass(
+            @RequestBody ChangePassRequest changePassRequest) {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        result.setData(userService.changePassword(userContext.getUserId(), changePassRequest.getOldPassword(),
+                changePassRequest.getNewPassword(), changePassRequest.getConfirmPassword()));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
 }

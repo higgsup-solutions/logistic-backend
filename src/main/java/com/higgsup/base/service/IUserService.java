@@ -29,4 +29,11 @@ public interface IUserService {
 
     UserDTO updateUser(Long userId, UserDTO userDTO);
 
+    boolean changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword);
+
+    DimensionDTO saveDimension(DimensionDTO dimensionDTO, Long userId);
+
+    DimensionDTO updateDimension(DimensionDTO dimensionDTO);
+
+    void deleteDimension(Long dimensionId);
 }

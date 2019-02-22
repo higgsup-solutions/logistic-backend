@@ -11,14 +11,17 @@ import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.logging.log4j.util.Strings;
 import org.apache.tomcat.jni.Address;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +32,7 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     private final UserRoleRepository userRoleRepository;
 
@@ -43,7 +46,7 @@ public class UserService implements IUserService {
 
     private final MapperFacade mapperFacade;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository,  CountryRepository countryRepository, MapperFacade mapperFacade) {
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, UserRoleRepository userRoleRepository, IUserRoleService userRoleService, DimentionRepository dimentionRepository, AddressBookRepository addressBookRepository,  CountryRepository countryRepository, MapperFacade mapperFacade) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRoleRepository = userRoleRepository;
@@ -118,7 +121,7 @@ public class UserService implements IUserService {
             AddressDTO addressDTO = new AddressDTO();
             BeanUtils.copyProperties(userAddress, addressDTO);
             addressDTO.setId(userAddress.getId().longValue());
-            addressDTO.setCountryId(userAddress.getId().longValue());
+            addressDTO.setCountryId(userAddress.getCountryId().longValue());
             addressDTO.setId(userAddress.getId().longValue());
             addressDTOList.add(addressDTO);
         }
@@ -165,7 +168,7 @@ public class UserService implements IUserService {
     public UserDTO findUser(Long userId){
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(userOptional.get(), userDTO);
@@ -177,12 +180,62 @@ public class UserService implements IUserService {
     public UserDTO updateUser(Long userId, UserDTO userDTO) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             User user = userOptional.get();
             BeanUtils.copyProperties(userDTO, user, "id", "email", "password");
             userRepository.save(user);
             return userDTO;
+        }
+    }
+
+    @Override
+    public boolean changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if(!userOptional.isPresent()){
+            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+        }else{
+            if(Strings.isBlank(oldPassword) || Strings.isEmpty(newPassword) || Strings.isEmpty(confirmPassword) ){
+                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+            }
+            if(oldPassword.equals(newPassword)){
+                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+            }else if(!newPassword.equals(confirmPassword)) {
+                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+            }else {
+                User user = userOptional.get();
+                if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+                    throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+                }
+                user.setPassword(passwordEncoder.encode(newPassword));
+                return userRepository.save(user) != null;
+
+            }
+        }
+    }
+
+    @Override
+    public DimensionDTO saveDimension(DimensionDTO dimensionDTO, Long userId) {
+        Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
+        dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+        dimention.setUserId(userId);
+        return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
+    }
+
+    @Override
+    public DimensionDTO updateDimension(DimensionDTO dimensionDTO) {
+        Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
+        dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+        return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
+    }
+
+    @Override
+    public void deleteDimension(Long dimensionId) {
+        Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);
+        if(!dimentionOptional.isPresent()) {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }else{
+            dimentionRepository.delete(dimentionOptional.get());
         }
     }
 }
