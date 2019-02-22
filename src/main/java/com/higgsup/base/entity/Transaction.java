@@ -10,6 +10,7 @@ public class Transaction {
     private Long id;
     private Timestamp shippingDate;
     private String carierName;
+    private String serviceType;
     private String packageType;
     private String contactSender;
     private String trackingNo;
@@ -320,6 +321,14 @@ public class Transaction {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 
     @Override

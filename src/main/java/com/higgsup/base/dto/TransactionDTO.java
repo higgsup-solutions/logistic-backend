@@ -10,6 +10,7 @@ public class TransactionDTO {
     private Long id;
     private Timestamp shippingDate;
     private String carierName;
+    private String serviceType;
     private String packageType;
     private String contactSender;
     private Long trackingNo;
