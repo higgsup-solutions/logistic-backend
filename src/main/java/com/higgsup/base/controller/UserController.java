@@ -36,11 +36,10 @@ public class UserController {
     public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
-        responseMessage.setData(userService.getTop5Dimension());
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.getDimensions(userContext.getUserId(),limit));
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-        iPagedResponse.setResponseMessage(responseMessage);
-
-        return iPagedResponse;
+        return ResponseEntity.ok(responseMessage);
     }
 
     @GetMapping(value = "/{id}/addresses")

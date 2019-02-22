@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,10 +93,9 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<DimensionDTO> getTop5Dimension() {
+    public List<DimensionDTO> getDimensions (Long userId, Integer limit) {
         List<DimensionDTO> dimensionDTOS = new ArrayList<>();
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Dimention> dimentions = dimentionRepository.getTop5Dimention(userContext.getUserId());
+        List<Dimention> dimentions = dimentionRepository.getDimentions(userId, limit);
 
         // convert from dimension entity to dimention DTO by bean copy
         for (Dimention dimention : dimentions) {
