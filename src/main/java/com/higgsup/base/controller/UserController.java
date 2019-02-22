@@ -53,17 +53,15 @@ public class UserController {
     }
 
 
-    @GetMapping("/dimension")
+    @GetMapping("/{id}/dimensions")
     @RequestLogger
-    public IPagedResponse<List<DimensionDTO>> getTop5Dimension(HttpServletRequest request) {
-        IPagedResponse iPagedResponse = new IPagedResponse();
+    public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
-        responseMessage.setData(userService.getTop5Dimension());
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.getDimensions(userContext.getUserId(),limit));
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-        iPagedResponse.setResponseMessage(responseMessage);
-
-        return iPagedResponse;
+        return ResponseEntity.ok(responseMessage);
     }
 
     @GetMapping(value = "/{id}/addresses")
@@ -88,8 +86,8 @@ public class UserController {
     @PutMapping(value = "/{id}/addresses/{addressId}")
     @RequestLogger
     public ResponseEntity<ResponseMessage> updateAddress(@PathVariable("id") Long id,
-                                                       @PathVariable("addressId") Long addressId,
-                                                       @RequestBody AddressDTO addressDTO) {
+                                                         @PathVariable("addressId") Long addressId,
+                                                         @RequestBody AddressDTO addressDTO) {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
         result.setData(userService.updateAddress(addressDTO, userContext.getUserId(), addressId));

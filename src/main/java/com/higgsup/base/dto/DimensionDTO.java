@@ -7,7 +7,9 @@ import lombok.Data;
 public class DimensionDTO {
   private Long id;
   private Double length;
-  private Double weight;
+  private String name;
+  private Double width;
   private Double height;
-  private Boolean dimentionDefault;
+  private Double weights;
+  private Integer quantity;
 }
