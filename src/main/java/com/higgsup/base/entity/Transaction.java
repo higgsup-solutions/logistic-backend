@@ -24,12 +24,20 @@ public class Transaction {
     private BigDecimal dtpAdminFee;
     private BigDecimal totalCharge;
 
+    private Double dimentionLength;
+    private Double dimentionWeight;
+    private Double dimentionHeight;
+
+    private Double cubicWeight;
+
+    private Double gst;
     private String contentType;
 
     private String senderCountryName;
     private String senderCompany;
     private String senderContactName;
-    private String senderAddress;
+    private String senderAddress1;
+    private String senderAddress2;
     private String senderCityName;
     private String senderStateProvince;
     private String senderPostalCode;
@@ -37,7 +45,8 @@ public class Transaction {
     private String recipientCountryName;
     private String recipientCompany;
     private String recipientContactName;
-    private String recipientAddress;
+    private String recipientAddress1;
+    private String recipientAddress2;
     private String recipientCityName;
     private String recipientStateProvince;
     private String recipientPostalCode;
@@ -227,14 +236,6 @@ public class Transaction {
         this.senderContactName = senderContactName;
     }
 
-    public String getSenderAddress() {
-        return senderAddress;
-    }
-
-    public void setSenderAddress(String senderAddress) {
-        this.senderAddress = senderAddress;
-    }
-
     public String getSenderCityName() {
         return senderCityName;
     }
@@ -283,12 +284,36 @@ public class Transaction {
         this.recipientContactName = recipientContactName;
     }
 
-    public String getRecipientAddress() {
-        return recipientAddress;
+    public String getSenderAddress1() {
+        return senderAddress1;
     }
 
-    public void setRecipientAddress(String recipientAddress) {
-        this.recipientAddress = recipientAddress;
+    public void setSenderAddress1(String senderAddress1) {
+        this.senderAddress1 = senderAddress1;
+    }
+
+    public String getSenderAddress2() {
+        return senderAddress2;
+    }
+
+    public void setSenderAddress2(String senderAddress2) {
+        this.senderAddress2 = senderAddress2;
+    }
+
+    public String getRecipientAddress1() {
+        return recipientAddress1;
+    }
+
+    public void setRecipientAddress1(String recipientAddress1) {
+        this.recipientAddress1 = recipientAddress1;
+    }
+
+    public String getRecipientAddress2() {
+        return recipientAddress2;
+    }
+
+    public void setRecipientAddress2(String recipientAddress2) {
+        this.recipientAddress2 = recipientAddress2;
     }
 
     public String getRecipientCityName() {
@@ -330,6 +355,48 @@ public class Transaction {
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
+
+    public Double getDimentionLength() {
+        return dimentionLength;
+    }
+
+    public void setDimentionLength(Double dimentionLength) {
+        this.dimentionLength = dimentionLength;
+    }
+
+    public Double getDimentionWeight() {
+        return dimentionWeight;
+    }
+
+    public void setDimentionWeight(Double dimentionWeight) {
+        this.dimentionWeight = dimentionWeight;
+    }
+
+    public Double getDimentionHeight() {
+        return dimentionHeight;
+    }
+
+    public void setDimentionHeight(Double dimentionHeight) {
+        this.dimentionHeight = dimentionHeight;
+    }
+
+    public Double getCubicWeight() {
+        return cubicWeight;
+    }
+
+    public void setCubicWeight(Double cubicWeight) {
+        this.cubicWeight = cubicWeight;
+    }
+
+    public Double getGst() {
+        return gst;
+    }
+
+    public void setGst(Double gst) {
+        this.gst = gst;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {
