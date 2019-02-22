@@ -2,6 +2,7 @@ package com.higgsup.base.controller;
 
 import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
+import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.log.RequestLogger;
