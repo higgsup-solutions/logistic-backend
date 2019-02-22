@@ -24,6 +24,13 @@ public class TransactionDTO {
     private BigDecimal dtpAdminFee;
     private BigDecimal totalCharge;
 
+    private Double dimentionLength;
+    private Double dimentionWeight;
+    private Double dimentionHeight;
+
+    private Double cubicWeight;
+
+    private Double gst;
     private String contentType;
 
     private String senderCountryName;

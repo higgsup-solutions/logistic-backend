@@ -24,6 +24,13 @@ public class Transaction {
     private BigDecimal dtpAdminFee;
     private BigDecimal totalCharge;
 
+    private Double dimentionLength;
+    private Double dimentionWeight;
+    private Double dimentionHeight;
+
+    private Double cubicWeight;
+
+    private Double gst;
     private String contentType;
 
     private String senderCountryName;
@@ -329,6 +336,46 @@ public class Transaction {
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
+    }
+
+    public Double getDimentionLength() {
+        return dimentionLength;
+    }
+
+    public void setDimentionLength(Double dimentionLength) {
+        this.dimentionLength = dimentionLength;
+    }
+
+    public Double getDimentionWeight() {
+        return dimentionWeight;
+    }
+
+    public void setDimentionWeight(Double dimentionWeight) {
+        this.dimentionWeight = dimentionWeight;
+    }
+
+    public Double getDimentionHeight() {
+        return dimentionHeight;
+    }
+
+    public void setDimentionHeight(Double dimentionHeight) {
+        this.dimentionHeight = dimentionHeight;
+    }
+
+    public Double getCubicWeight() {
+        return cubicWeight;
+    }
+
+    public void setCubicWeight(Double cubicWeight) {
+        this.cubicWeight = cubicWeight;
+    }
+
+    public Double getGst() {
+        return gst;
+    }
+
+    public void setGst(Double gst) {
+        this.gst = gst;
     }
 
     @Override
