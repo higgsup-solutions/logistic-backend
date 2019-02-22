@@ -2,7 +2,7 @@ package com.higgsup.base.controller;
 
 import com.higgsup.base.dto.CarrierDTO;
 
-import com.higgsup.base.dto.base.IPagedResponse;
+import com.higgsup.base.dto.QuoteRequest;
 import com.higgsup.base.dto.base.ResponseMessage;
 
 import com.higgsup.base.locale.Translator;
@@ -13,11 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -45,5 +42,14 @@ public class CarrierController {
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
 
         return ResponseEntity.ok(responseMessage);
+    }
+
+    @PostMapping(value = "/quote")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> showQuoteResult(@RequestBody QuoteRequest quoteRequest) {
+        ResponseMessage result = new ResponseMessage();
+        result.setData(carrierService.showQuoteResult(quoteRequest));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
     }
 }

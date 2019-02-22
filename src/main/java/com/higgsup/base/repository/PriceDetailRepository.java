@@ -1,12 +1,11 @@
 package com.higgsup.base.repository;
 
 import com.higgsup.base.entity.Carrier;
-import com.higgsup.base.entity.Dimention;
 import com.higgsup.base.entity.PriceDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface PriceDetailRepository extends JpaRepository<PriceDetail, Long> {
     @Query(value = "select select c.id, c.carrier_type " +
@@ -20,5 +19,7 @@ public interface PriceDetailRepository extends JpaRepository<PriceDetail, Long> 
             "JOIN city c on c.id = pd.address_from_id" +
             "where pd.package_id =:packageId;", nativeQuery = true)
     PriceDetail getPriceOfZone(Long packageId);
+
+    Optional<PriceDetail> findByPackageId(Long packageId);
 }
 
