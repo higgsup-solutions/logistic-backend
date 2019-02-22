@@ -37,16 +37,13 @@ public class CarrierController {
         return ResponseEntity.ok(Translator.toLocale("hello"));
     }
 
-    @GetMapping("/carrier")
+    @GetMapping("")
     @RequestLogger
-    public IPagedResponse<List<CarrierDTO>> getAllCarrierType(HttpServletRequest request) {
-        IPagedResponse iPagedResponse = new IPagedResponse();
-
+    public ResponseEntity<ResponseMessage> getAllCarrierType() {
         ResponseMessage<List<CarrierDTO>> responseMessage = new ResponseMessage<>();
         responseMessage.setData(carrierService.getAllCarrierType());
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
-        iPagedResponse.setResponseMessage(responseMessage);
 
-        return iPagedResponse;
+        return ResponseEntity.ok(responseMessage);
     }
 }

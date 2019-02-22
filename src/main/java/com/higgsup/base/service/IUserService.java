@@ -15,7 +15,7 @@ public interface IUserService {
 
     User createUser(UserDTO userDTO);
 
-    List<DimensionDTO> getTop5Dimension();
+    List<DimensionDTO> getDimensions (Long userId, Integer dimensionNumber);
 
     List<AddressDTO> getAddressList(Long userId);
 

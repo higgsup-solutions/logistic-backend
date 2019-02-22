@@ -100,11 +100,6 @@ public class UserService implements IUserService {
         // convert from dimension entity to dimention DTO by bean copy
         for (Dimention dimention : dimentions) {
             DimensionDTO dimensionDTO = new DimensionDTO();
-            if (dimention.getDimentionDefault() == 0) {
-                dimensionDTO.setDimentionDefault(false);
-            } else {
-                dimensionDTO.setDimentionDefault(true);
-            }
             BeanUtils.copyProperties(dimention, dimensionDTO);
             dimensionDTOS.add(dimensionDTO);
 

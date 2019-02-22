@@ -31,10 +31,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/dimension")
+    @GetMapping("/{id}/dimensions")
     @RequestLogger
-    public IPagedResponse<List<DimensionDTO>> getTop5Dimension(HttpServletRequest request) {
-        IPagedResponse iPagedResponse = new IPagedResponse();
+    public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
         responseMessage.setData(userService.getTop5Dimension());
