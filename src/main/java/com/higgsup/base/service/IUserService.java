@@ -9,7 +9,7 @@ import com.higgsup.base.entity.User;
 import java.util.List;
 
 public interface IUserService {
-    User getByUsername(String username);
+    User getByEmail(String email);
 
     List<User> getUser();
 
@@ -20,5 +20,13 @@ public interface IUserService {
     List<AddressDTO> getAddressList(Long userId);
 
     AddressBook saveAddress(AddressDTO addressDTO, Long userId);
+
+    AddressDTO updateAddress(AddressDTO addressDTO, Long userId, Long addressId);
+
+    void delete(Long userId, Long addressId);
+
+    UserDTO findUser(Long userId);
+
+    UserDTO updateUser(Long userId, UserDTO userDTO);
 
 }

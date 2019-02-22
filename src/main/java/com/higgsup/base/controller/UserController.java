@@ -31,6 +31,26 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/{id}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> getUserInfo(@PathVariable("id") Long id) {
+        ResponseMessage<UserDTO> responseMessage = new ResponseMessage<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.findUser(userContext.getUserId()));
+        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(responseMessage);
+    }
+    @PutMapping("/{id}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> updateUser(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
+        ResponseMessage<UserDTO> responseMessage = new ResponseMessage<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.updateUser(userContext.getUserId(), userDTO));
+        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(responseMessage);
+    }
+
+
     @GetMapping("/{id}/dimensions")
     @RequestLogger
     public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
