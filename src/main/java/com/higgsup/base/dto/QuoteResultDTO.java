@@ -5,6 +5,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.util.List;
 
+import java.math.BigDecimal;
+
 @Data
 public class QuoteResultDTO {
     private BigDecimal baseCharge;
