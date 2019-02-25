@@ -3,7 +3,6 @@ package com.higgsup.base.controller;
 import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
-import com.higgsup.base.dto.base.IPagedResponse;
 import com.higgsup.base.dto.base.ResponseMessage;
 import com.higgsup.base.log.RequestLogger;
 import com.higgsup.base.security.auth.ajax.ChangePassRequest;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -59,7 +57,7 @@ public class UserController {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        responseMessage.setData(userService.getDimensions(userContext.getUserId(),limit));
+        responseMessage.setData(userService.getDimensions(userContext.getUserId(), limit));
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(responseMessage);
     }
@@ -116,7 +114,7 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
     @PostMapping("/{id}/change_pass")
-    public ResponseEntity<ResponseMessage> changePass(
+    public ResponseEntity<ResponseMessage> changePass(@PathVariable("id") Long id,
             @RequestBody ChangePassRequest changePassRequest) {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
