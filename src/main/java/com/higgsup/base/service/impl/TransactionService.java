@@ -121,12 +121,12 @@ public class TransactionService implements ITransactionService {
 
         List<TransactionDimension> transactionDimensionList = new ArrayList<>();
         int peices = 0 ;
-        for (DimensionDTO dimensionDTO: bookingDTO.getQuoteRequest().getDimensionDTOList()
+        for (DimensionDTO dimensionDTO: quoteResultDTO.getDimensions()
              ) {
             TransactionDimension transactionDimension = mapperFacade.map(dimensionDTO, TransactionDimension.class);
             transactionDimension.setTransactionId(transactionId);
             transactionDimensionList.add(transactionDimension);
-            peices =peices + transactionDimension.getQuantity();
+            peices = peices + transactionDimension.getQuantity();
         }
 
         if(!CollectionUtils.isEmpty(transactionDimensionList)) {

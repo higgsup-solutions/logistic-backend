@@ -17,4 +17,5 @@ public class TransactionDimension {
     private Double height;
     private Double weights;
     private Integer quantity;
+    private Double cubicWeight;
 }
