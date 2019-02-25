@@ -105,10 +105,10 @@ public class CarrierService implements ICarrierService {
                                               Long countryId, String cityFrom, String cityTo, List<DimensionDTO> dimensionDTOs, boolean dangerousGoods) {
 
 
-        Double totalCharge = 0d;
+        Double totalCharge;
         Double totalBaseCharge = 0d;
         Double totalWeight = 0d;
-        Double actualWeight = 0d;
+        Double actualWeight;
         int quantity = 1;
 
         QuoteResultDTO quoteResultDTO = new QuoteResultDTO();
@@ -143,14 +143,14 @@ public class CarrierService implements ICarrierService {
             }
 
             //rate
-            Double weighBaseRate = getRateWeightOfDomestic(priceDetailOptional.get(), weight);
-            Double weighRateZone = zonePrice.getZonePrice().doubleValue();
+            double weighBaseRate = getRateWeightOfDomestic(priceDetailOptional.get(), weight);
+            double weighRateZone = zonePrice.getZonePrice().doubleValue();
             baseCharge = weight * weighBaseRate * weighRateZone * quantity;
             totalBaseCharge += baseCharge;
             totalWeight += actualWeight;
         }
 
-        if (dangerousGoods == true) {
+        if (dangerousGoods) {
             quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? 0 : priceDetailOptional.get().getDangerousCharge().doubleValue());
             totalCharge = totalBaseCharge + priceDetailOptional.get().getDangerousCharge().doubleValue();
         } else {
@@ -171,11 +171,11 @@ public class CarrierService implements ICarrierService {
 
     private QuoteResultDTO doQuoteForInternational(Long carrierId, Long packageId, String contentType, List<DimensionDTO> dimensionDTOs, boolean dangerousGoods) {
 
-        Double totalCharge = 0d;
+        Double totalCharge;
         Double totalBaseCharge = 0d;
         Double totalWeight = 0d;
         int quantity = 1;
-        Double actualWeight = 0d;
+        Double actualWeight;
 
         QuoteResultDTO quoteResultDTO = new QuoteResultDTO();
         Carrier carrier = carrierRepository.findCarrierById(carrierId);
@@ -200,13 +200,13 @@ public class CarrierService implements ICarrierService {
             }
 
             //rate
-            Double weighBaseRate = getRateWeightOfInternational(priceDetailOptional.get(), weight);
+            double weighBaseRate = getRateWeightOfInternational(priceDetailOptional.get(), weight);
             baseCharge = weight * weighBaseRate * quantity;
             totalBaseCharge += baseCharge;
             totalWeight += actualWeight;
         }
 
-        if (dangerousGoods == true) {
+        if (dangerousGoods) {
             quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? 0 : priceDetailOptional.get().getDangerousCharge().doubleValue());
             totalCharge = totalBaseCharge + priceDetailOptional.get().getDangerousCharge().doubleValue();
         } else {
@@ -225,9 +225,9 @@ public class CarrierService implements ICarrierService {
     private double getRateWeightOfDomestic(PriceDetail priceDetail, Double weight) {
         if (weight <= 1) {
             return priceDetail.getBaseRate1().doubleValue();
-        } else if (weight > 1 && weight <= 10) {
+        } else if (weight <= 10) {
             return priceDetail.getBaseRate2().doubleValue();
-        } else if (weight > 10 && weight <= 50) {
+        } else if (weight <= 50) {
             return priceDetail.getBaseRate3().doubleValue();
         } else {
             return priceDetail.getBaseRate4().doubleValue();
@@ -237,9 +237,9 @@ public class CarrierService implements ICarrierService {
     private double getRateWeightOfInternational(PriceDetail priceDetail, Double weight) {
         if (weight <= 1) {
             return priceDetail.getBaseRate1().doubleValue();
-        } else if (weight > 1 && weight <= 5) {
+        } else if (weight <= 5) {
             return priceDetail.getBaseRate2().doubleValue();
-        } else if (weight > 5 && weight <= 30) {
+        } else if (weight <= 30) {
             return priceDetail.getBaseRate3().doubleValue();
         } else {
             return priceDetail.getBaseRate4().doubleValue();

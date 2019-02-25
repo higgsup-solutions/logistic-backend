@@ -29,11 +29,6 @@ public class CarrierController {
         this.carrierService = carrierService;
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity ping() {
-        return ResponseEntity.ok(Translator.toLocale("hello"));
-    }
-
     @GetMapping("")
     @RequestLogger
     public ResponseEntity<ResponseMessage> getAllCarrierType() {
