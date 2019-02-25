@@ -1,9 +1,11 @@
 package com.higgsup.base.service.impl;
 
+import com.higgsup.base.common.CarrierType;
+import com.higgsup.base.common.ContentType;
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.*;
-import com.higgsup.base.entity.*;
 import com.higgsup.base.entity.Package;
+import com.higgsup.base.entity.*;
 import com.higgsup.base.repository.*;
 import com.higgsup.base.service.ICarrierService;
 import org.springframework.beans.BeanUtils;
@@ -85,7 +87,7 @@ public class CarrierService implements ICarrierService {
         } else {
             Carrier carrier = carrierOptional.get();
 
-            if (carrier.getCarrierType().toLowerCase().contains("domestic")) {
+            if (carrier.getCarrierType().toLowerCase().contains(CarrierType.DOMESTIC.getContent())) {
                 return doQuoteForDomestic(quoteRequest.getCarrierId(), quoteRequest.getPackageId(),
                         quoteRequest.getContentType(), quoteRequest.getCountryId(), quoteRequest.getSenderCityName(),
                         quoteRequest.getRecipientCityName(), quoteRequest.getDimensionDTOList(), quoteRequest.getDangerousGoods());
@@ -133,7 +135,7 @@ public class CarrierService implements ICarrierService {
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
             BigDecimal baseCharge;
             Double weight = dimensionDTO.getWeights();
-            if (contentType.equals("D")) {
+            if (contentType.equals(ContentType.Documents.getContent())) {
                 weight = 1d;
                 actualWeight = 1d;
             } else {
@@ -152,7 +154,7 @@ public class CarrierService implements ICarrierService {
         }
 
         if (dangerousGoods) {
-            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO  : priceDetailOptional.get().getDangerousCharge());
+            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO : priceDetailOptional.get().getDangerousCharge());
             totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge());
         } else {
             quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
@@ -190,7 +192,7 @@ public class CarrierService implements ICarrierService {
             BigDecimal baseCharge;
             Double weight = dimensionDTO.getWeights();
 
-            if (contentType.equals("D")) {
+            if (contentType.equals(ContentType.Documents.getContent())) {
                 weight = 1d;
                 actualWeight = 1d;
             } else {
@@ -212,7 +214,7 @@ public class CarrierService implements ICarrierService {
             totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge());
         } else {
             quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
-            totalCharge = totalBaseCharge;
+            totalCharge = totalBaseCharge.add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
         }
         quoteResultDTO.setTotalWeight(totalWeight);
         quoteResultDTO.setBaseCharge(totalBaseCharge);
@@ -248,7 +250,7 @@ public class CarrierService implements ICarrierService {
     }
 
     private BigDecimal fuelSurcharge(BigDecimal baseCharge, String carrierType) {
-        if (carrierType.toUpperCase().contains("DHL")) {
+        if (carrierType.toUpperCase().contains(CarrierType.TNT.getContent())) {
             return (baseCharge.multiply(BigDecimal.valueOf(4L)).divide(BigDecimal.valueOf(100L)));
 
         } else {
