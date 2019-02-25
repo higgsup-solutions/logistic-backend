@@ -12,6 +12,6 @@ public class QuoteRequest {
     private Long packageId;
     private String contentType;
     private String senderCityName;
-    private String RecipientCityName;
+    private String recipientCityName;
     private Boolean dangerousGoods;
 }

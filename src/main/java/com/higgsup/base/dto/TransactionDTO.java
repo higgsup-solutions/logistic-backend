@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 public class TransactionDTO {
@@ -13,24 +14,13 @@ public class TransactionDTO {
     private String serviceType;
     private String packageType;
     private String contactSender;
-    private Long trackingNo;
+    private String trackingNo;
     private Integer pieces;
-    private Double actualWeight;
-    private String destCountry;
+
     private Byte status;
     private BigDecimal baseCharge;
-    private BigDecimal preClearance;
     private BigDecimal fuelSurcharge;
-    private BigDecimal dtpAdminFee;
     private BigDecimal totalCharge;
-
-    private Double dimentionLength;
-    private Double dimentionWeight;
-    private Double dimentionHeight;
-
-    private Double cubicWeight;
-
-    private Double gst;
     private String contentType;
 
     private String senderCountryName;
@@ -52,4 +42,9 @@ public class TransactionDTO {
     private String recipientStateProvince;
     private String recipientPostalCode;
     private String recipientPhoneNumber;
+
+    private Double totalWeight;
+
+    List<TransactionDimensionDTO> dimensionDTOList;
+
 }
