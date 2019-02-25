@@ -6,7 +6,6 @@ import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.*;
 import com.higgsup.base.entity.*;
 import com.higgsup.base.entity.Package;
-import com.higgsup.base.entity.*;
 import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.repository.*;
 import com.higgsup.base.service.ICarrierService;
@@ -69,8 +68,6 @@ public class CarrierService implements ICarrierService {
                 packageDTOList.add(packageDTO);
                 carrierDTO.setPackageDTO(packageDTOList);
             }
-
-
             carrierDTOList.add(carrierDTO);
         }
         return carrierDTOList;
@@ -147,16 +144,16 @@ public class CarrierService implements ICarrierService {
             //rate
             BigDecimal weighBaseRate = getRateWeightOfDomestic(priceDetailOptional.get(), weight);
             BigDecimal weighRateZone = zonePrice.getZonePrice();
-            baseCharge = baseCharge.add((new BigDecimal(weight)).add(weighBaseRate).add(weighRateZone).add(new BigDecimal(quantity)));
+            baseCharge = baseCharge.add((new BigDecimal(weight)).multiply(weighBaseRate).multiply(weighRateZone).multiply(new BigDecimal(quantity)));
             totalBaseCharge = totalBaseCharge.add(baseCharge);
             totalWeight += actualWeight;
         }
 
         if (dangerousGoods) {
-            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.valueOf(0) : priceDetailOptional.get().getDangerousCharge());
+            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO : priceDetailOptional.get().getDangerousCharge());
             totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge());
         } else {
-            quoteResultDTO.setDangerousCharge(BigDecimal.valueOf(0));
+            quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
             totalCharge = totalBaseCharge;
         }
 
@@ -173,7 +170,7 @@ public class CarrierService implements ICarrierService {
 
     private QuoteResultDTO doQuoteForInternational(Long carrierId, Long packageId, String contentType, List<DimensionDTO> dimensionDTOs, boolean dangerousGoods) {
 
-        BigDecimal totalCharge = new BigDecimal(0);
+        BigDecimal totalCharge =  BigDecimal.ZERO;
         BigDecimal totalBaseCharge = BigDecimal.ZERO;
         Double totalWeight = 0d;
         int quantity = 1;
@@ -188,7 +185,7 @@ public class CarrierService implements ICarrierService {
         }
 
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
-            BigDecimal baseCharge = BigDecimal.valueOf(0);
+            BigDecimal baseCharge = BigDecimal.ZERO;
             Double weight = setWeight(contentType,dimensionDTO.getLength(),dimensionDTO.getWidth(), dimensionDTO.getHeight(), dimensionDTO.getWeights(), dimensionDTO);
             quantity = dimensionDTO.getQuantity();
             actualWeight = (weight * quantity);
@@ -201,10 +198,10 @@ public class CarrierService implements ICarrierService {
         }
 
         if (dangerousGoods) {
-            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.valueOf(0) : priceDetailOptional.get().getDangerousCharge());
+            quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO : priceDetailOptional.get().getDangerousCharge());
             totalCharge = totalCharge.add(totalBaseCharge).add(priceDetailOptional.get().getDangerousCharge());
         } else {
-            quoteResultDTO.setDangerousCharge(BigDecimal.valueOf(0));
+            quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
             totalCharge = totalCharge.add(totalBaseCharge).add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
         }
         quoteResultDTO.setTotalWeight(totalWeight);
@@ -215,7 +212,6 @@ public class CarrierService implements ICarrierService {
         quoteResultDTO.setDimensions(dimensionDTOs);
         return quoteResultDTO;
     }
-
 
     private BigDecimal getRateWeightOfDomestic(PriceDetail priceDetail, Double weight) {
         if (weight <= 1) {
