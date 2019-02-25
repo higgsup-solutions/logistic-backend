@@ -5,18 +5,15 @@ import com.higgsup.base.dto.AddressDTO;
 import com.higgsup.base.dto.DimensionDTO;
 import com.higgsup.base.dto.UserDTO;
 import com.higgsup.base.entity.*;
+import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.model.UserAddress;
 import com.higgsup.base.repository.*;
-import com.higgsup.base.security.model.UserContext;
 import com.higgsup.base.service.IUserRoleService;
 import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.logging.log4j.util.Strings;
-import org.apache.tomcat.jni.Address;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -72,7 +69,7 @@ public class UserService implements IUserService {
     public User createUser(UserDTO userDTO) {
 
         if (userRepository.existsByEmail(userDTO.getEmail())) {
-            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
+            throw new BusinessException(ErrorCode.DUPPLICATE_EMAIL, String.valueOf(ErrorCode.DUPPLICATE_EMAIL.getErrorCode()));
         }
 
         User user = new User();
@@ -108,7 +105,7 @@ public class UserService implements IUserService {
         List<UserAddress> addressList = userRepository.selectAddressList(userId);
 
         if (CollectionUtils.isEmpty(addressList)) {
-            return null;
+            return new ArrayList<>();
         }
         List<AddressDTO> addressDTOList = new ArrayList<>();
         for(UserAddress userAddress : addressList){
@@ -126,7 +123,7 @@ public class UserService implements IUserService {
     @Override
     public AddressBook saveAddress(AddressDTO addressDTO, Long userId) {
         if(addressBookRepository.existsByCompanyAndContactNameAndUserId(addressDTO.getCompany(), addressDTO.getContactName(), userId)) {
-            throw new RuntimeException(String.valueOf(ErrorCode.DUPPLICATE_ADDRESS.getErrorCode()));
+            throw new BusinessException(ErrorCode.DUPPLICATE_ADDRESS, String.valueOf(ErrorCode.DUPPLICATE_ADDRESS.getErrorCode()));
         }
         AddressBook addressBook = mapperFacade.map(addressDTO, AddressBook.class);
         addressBook.setUserId(userId);
@@ -162,7 +159,7 @@ public class UserService implements IUserService {
     public UserDTO findUser(Long userId){
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             UserDTO userDTO = new UserDTO();
             BeanUtils.copyProperties(userOptional.get(), userDTO);
@@ -174,7 +171,7 @@ public class UserService implements IUserService {
     public UserDTO updateUser(Long userId, UserDTO userDTO) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             User user = userOptional.get();
             BeanUtils.copyProperties(userDTO, user, "id", "email", "password");
@@ -187,19 +184,19 @@ public class UserService implements IUserService {
     public boolean changePassword(Long userId, String oldPassword, String newPassword, String confirmPassword) {
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()){
-            throw new RuntimeException(String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             if(Strings.isBlank(oldPassword) || Strings.isEmpty(newPassword) || Strings.isEmpty(confirmPassword) ){
-                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+                throw new BusinessException(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID, String.valueOf(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
             }
             if(oldPassword.equals(newPassword)){
-                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+                throw new BusinessException(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID, String.valueOf(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
             }else if(!newPassword.equals(confirmPassword)) {
-                throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+                throw new BusinessException(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID, String.valueOf(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
             }else {
                 User user = userOptional.get();
                 if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-                    throw new RuntimeException(String.valueOf(ErrorCode.NEW_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
+                    throw new BusinessException(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID, String.valueOf(ErrorCode.OLD_PASSWORD_OR_NEW_PASSWORD_INVALID.getErrorCode()));
                 }
                 user.setPassword(passwordEncoder.encode(newPassword));
                 return userRepository.save(user) != null;

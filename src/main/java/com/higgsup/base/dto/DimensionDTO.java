@@ -12,4 +12,5 @@ public class DimensionDTO {
   private Double height;
   private Double weights;
   private Integer quantity;
+  private Double cubicWeight = 0d;
 }

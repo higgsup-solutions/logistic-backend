@@ -3,6 +3,7 @@ package com.higgsup.base.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class QuoteResultDTO {
@@ -12,4 +13,5 @@ public class QuoteResultDTO {
     private BigDecimal totalCharge;
     private Double totalWeight;
     private String weightType;
+    private List<DimensionDTO> dimensions;
 }

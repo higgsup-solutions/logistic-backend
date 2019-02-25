@@ -6,6 +6,7 @@ import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.*;
 import com.higgsup.base.entity.Package;
 import com.higgsup.base.entity.*;
+import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.repository.*;
 import com.higgsup.base.service.ICarrierService;
 import org.springframework.beans.BeanUtils;
@@ -83,8 +84,12 @@ public class CarrierService implements ICarrierService {
     public QuoteResultDTO showQuoteResult(QuoteRequest quoteRequest) {
         Optional<Carrier> carrierOptional = carrierRepository.findById(quoteRequest.getCarrierId());
         if (!carrierOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
-        } else {
+            throw new BusinessException(ErrorCode.CARRIER_NOT_FOUND, String.valueOf(ErrorCode.CARRIER_NOT_FOUND.getErrorCode()));
+        }
+        else if(CollectionUtils.isEmpty(quoteRequest.getDimensionDTOList())){
+            throw new BusinessException(ErrorCode.DIMENSION_IS_EMPTY, String.valueOf(ErrorCode.DIMENSION_IS_EMPTY.getErrorCode()));
+        }
+        else {
             Carrier carrier = carrierOptional.get();
 
             if (carrier.getCarrierType().toLowerCase().contains(CarrierType.DOMESTIC.getContent())) {
@@ -143,6 +148,7 @@ public class CarrierService implements ICarrierService {
                 weight = weight > cubicWeight ? weight : cubicWeight;
                 quantity = dimensionDTO.getQuantity();
                 actualWeight = (dimensionDTO.getWeights() * quantity);
+                dimensionDTO.setCubicWeight(cubicWeight);
             }
 
             //rate
@@ -164,7 +170,7 @@ public class CarrierService implements ICarrierService {
 
         //find zone name
         quoteResultDTO.setTotalWeight(totalWeight);
-
+        quoteResultDTO.setDimensions(dimensionDTOs);
         quoteResultDTO.setBaseCharge(totalBaseCharge);
         quoteResultDTO.setTotalCharge(totalCharge);
         quoteResultDTO.setWeightType("Actual");
@@ -200,6 +206,7 @@ public class CarrierService implements ICarrierService {
                 weight = weight > cubicWeight ? weight : cubicWeight;
                 quantity = dimensionDTO.getQuantity();
                 actualWeight = (dimensionDTO.getWeights() * quantity);
+                dimensionDTO.setCubicWeight(cubicWeight);
             }
 
             //rate
@@ -207,6 +214,7 @@ public class CarrierService implements ICarrierService {
             baseCharge = BigDecimal.valueOf(weight).multiply(weighBaseRate).multiply(BigDecimal.valueOf(Long.parseLong(String.valueOf(quantity))));
             totalBaseCharge = totalBaseCharge.add(baseCharge);
             totalWeight += actualWeight;
+
         }
 
         if (dangerousGoods) {
@@ -221,7 +229,7 @@ public class CarrierService implements ICarrierService {
         quoteResultDTO.setTotalCharge(totalCharge);
         quoteResultDTO.setFuelSurcharge(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
         quoteResultDTO.setWeightType("Actual");
-
+        quoteResultDTO.setDimensions(dimensionDTOs);
         return quoteResultDTO;
     }
 
