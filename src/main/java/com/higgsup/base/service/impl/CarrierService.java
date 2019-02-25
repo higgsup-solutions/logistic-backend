@@ -1,5 +1,7 @@
 package com.higgsup.base.service.impl;
 
+import com.higgsup.base.common.CarrierType;
+import com.higgsup.base.common.ContentType;
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.*;
 import com.higgsup.base.entity.*;
@@ -84,7 +86,7 @@ public class CarrierService implements ICarrierService {
         } else {
             Carrier carrier = carrierOptional.get();
 
-            if (carrier.getCarrierType().toLowerCase().contains("domestic")) {
+            if (carrier.getCarrierType().toLowerCase().contains(CarrierType.DOMESTIC.getContent())) {
                 return doQuoteForDomestic(quoteRequest.getCarrierId(), quoteRequest.getPackageId(),
                         quoteRequest.getContentType(), quoteRequest.getCountryId(), quoteRequest.getSenderCityName(),
                         quoteRequest.getRecipientCityName(), quoteRequest.getDimensionDTOList(), quoteRequest.getDangerousGoods());
@@ -132,7 +134,7 @@ public class CarrierService implements ICarrierService {
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
             Double baseCharge;
             Double weight = dimensionDTO.getWeights();
-            if (contentType.equals("D")) {
+            if (contentType.equals(ContentType.Documents.getContent())) {
                 weight = 1d;
                 actualWeight = 1d;
             } else {
@@ -189,7 +191,7 @@ public class CarrierService implements ICarrierService {
             Double baseCharge;
             Double weight = dimensionDTO.getWeights();
 
-            if (contentType.equals("D")) {
+            if (contentType.equals(ContentType.Documents.getContent())) {
                 weight = 1d;
                 actualWeight = 1d;
             } else {
@@ -211,7 +213,7 @@ public class CarrierService implements ICarrierService {
             totalCharge = totalBaseCharge + priceDetailOptional.get().getDangerousCharge().doubleValue();
         } else {
             quoteResultDTO.setDangerousCharge(0D);
-            totalCharge = totalBaseCharge;
+            totalCharge = totalBaseCharge + fuelSurcharge(totalBaseCharge, carrier.getCarrierType());
         }
         quoteResultDTO.setTotalWeight(totalWeight);
         quoteResultDTO.setBaseCharge(totalBaseCharge);
@@ -247,9 +249,8 @@ public class CarrierService implements ICarrierService {
     }
 
     private double fuelSurcharge(double baseCharge, String carrierType) {
-        if (carrierType.toUpperCase().contains("DHL")) {
+        if (carrierType.toUpperCase().contains(CarrierType.TNT.getContent())) {
             return (baseCharge * 4) / 100;
-
         } else {
             return (baseCharge * 3) / 100;
         }
