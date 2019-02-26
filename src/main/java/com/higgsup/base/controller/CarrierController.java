@@ -39,9 +39,9 @@ public class CarrierController {
         return ResponseEntity.ok(responseMessage);
     }
 
-    @PostMapping(value = "/quote")
+    @PostMapping(value = "{carrierId}/quote")
     @RequestLogger
-    public ResponseEntity<ResponseMessage> showQuoteResult(@RequestBody QuoteRequest quoteRequest) {
+    public ResponseEntity<ResponseMessage> showQuoteResult(@PathVariable Long carrierId, @RequestBody QuoteRequest quoteRequest) {
         ResponseMessage result = new ResponseMessage();
         result.setData(carrierService.showQuoteResult(quoteRequest));
         result.setStatus(HttpStatus.OK.getReasonPhrase());
