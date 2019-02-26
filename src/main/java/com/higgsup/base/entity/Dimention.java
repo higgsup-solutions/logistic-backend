@@ -11,7 +11,7 @@ public class Dimention {
     private Double length;
     private Double width;
     private Double height;
-    private Byte dimentionDefault;
+    private String name;
     private Timestamp lastUpdated;
 
     @Id
@@ -23,6 +23,16 @@ public class Dimention {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    @Basic
+    @Column(name = "name", nullable = true)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Basic
@@ -66,16 +76,6 @@ public class Dimention {
     }
 
     @Basic
-    @Column(name = "dimention_default", nullable = true)
-    public Byte getDimentionDefault() {
-        return dimentionDefault;
-    }
-
-    public void setDimentionDefault(Byte dimentionDefault) {
-        this.dimentionDefault = dimentionDefault;
-    }
-
-    @Basic
     @Column(name = "last_updated", nullable = true)
     public Timestamp getLastUpdated() {
         return lastUpdated;
@@ -94,12 +94,11 @@ public class Dimention {
                 Objects.equals(userId, dimention.userId) &&
                 Objects.equals(length, dimention.length) &&
                 Objects.equals(width, dimention.width) &&
-                Objects.equals(height, dimention.height) &&
-                Objects.equals(dimentionDefault, dimention.dimentionDefault);
+                Objects.equals(height, dimention.height);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, length, width, height, dimentionDefault);
+        return Objects.hash(id, userId, length, width, height);
     }
 }

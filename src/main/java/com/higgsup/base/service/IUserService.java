@@ -33,7 +33,7 @@ public interface IUserService {
 
     DimensionDTO saveDimension(DimensionDTO dimensionDTO, Long userId);
 
-    DimensionDTO updateDimension(DimensionDTO dimensionDTO);
+    DimensionDTO updateDimension(Long userId, DimensionDTO dimensionDTO, Long dimensionId);
 
-    void deleteDimension(Long dimensionId);
+    void deleteDimension(Long dimensionId, Long userId);
 }
