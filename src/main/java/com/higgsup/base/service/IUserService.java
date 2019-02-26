@@ -35,5 +35,5 @@ public interface IUserService {
 
     DimensionDTO updateDimension(DimensionDTO dimensionDTO);
 
-    void deleteDimension(Long dimensionId);
+    void deleteDimension(Long dimensionId, Long userId);
 }

@@ -207,10 +207,15 @@ public class UserService implements IUserService {
 
     @Override
     public DimensionDTO saveDimension(DimensionDTO dimensionDTO, Long userId) {
-        Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
-        dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
-        dimention.setUserId(userId);
-        return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()){
+            Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
+            dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+            dimention.setUserId(userId);
+            return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
+        }else {
+            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+        }
     }
 
     @Override
@@ -221,12 +226,17 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void deleteDimension(Long dimensionId) {
-        Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);
-        if(!dimentionOptional.isPresent()) {
+    public void deleteDimension(Long dimensionId, Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()){
+            Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);
+            if(!dimentionOptional.isPresent()) {
+                throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            }else{
+                dimentionRepository.deleteByIdAndUserId(dimensionId,userId);
+            }
+        } else {
             throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
-        }else{
-            dimentionRepository.delete(dimentionOptional.get());
         }
     }
 }

@@ -56,8 +56,7 @@ public class UserController {
     public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
-        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        responseMessage.setData(userService.getDimensions(userContext.getUserId(), limit));
+        responseMessage.setData(userService.getDimensions(id, limit));
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(responseMessage);
     }
@@ -109,7 +108,7 @@ public class UserController {
                                                          @PathVariable("dimensionId") Long dimensionId) {
 
         ResponseMessage result = new ResponseMessage();
-        userService.deleteDimension(dimensionId);
+        userService.deleteDimension(dimensionId,id);
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
