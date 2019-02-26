@@ -88,16 +88,24 @@ public class UserService implements IUserService {
     @Override
     public List<DimensionDTO> getDimensions(Long userId, Integer dimensionNumber) {
         List<DimensionDTO> dimensionDTOS = new ArrayList<>();
-        List<Dimention> dimentions = dimentionRepository.getDimentions(userId, dimensionNumber);
-
-        // convert from dimension entity to dimention DTO by bean copy
-        for (Dimention dimention : dimentions) {
-            DimensionDTO dimensionDTO = new DimensionDTO();
-            BeanUtils.copyProperties(dimention, dimensionDTO);
-            dimensionDTOS.add(dimensionDTO);
-
+        List<Dimention> dimentions = new ArrayList<>();
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+        } else {
+            if (dimensionNumber == null){
+                dimentions.addAll(dimentionRepository.findAllByUserId(userId));
+            } else {
+                dimentions.addAll(dimentionRepository.getDimentions(userId, dimensionNumber));
+            }
+            // convert from dimension entity to dimention DTO by bean copy
+            for (Dimention dimention : dimentions) {
+                DimensionDTO dimensionDTO = new DimensionDTO();
+                BeanUtils.copyProperties(dimention, dimensionDTO);
+                dimensionDTOS.add(dimensionDTO);
+            }
+            return dimensionDTOS;
         }
-        return dimensionDTOS;
     }
 
     @Override
@@ -214,15 +222,27 @@ public class UserService implements IUserService {
             dimention.setUserId(userId);
             return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
         }else {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }
     }
 
     @Override
-    public DimensionDTO updateDimension(DimensionDTO dimensionDTO) {
-        Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
-        dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
-        return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
+    public DimensionDTO updateDimension(Long userId, DimensionDTO dimensionDTO, Long dimensionId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+        }else {
+            Optional<Dimention> dimensionOptional = dimentionRepository.findById(dimensionId);
+            if (!dimensionOptional.isPresent()){
+                throw new BusinessException(ErrorCode.DIMENSION_IS_EMPTY, String.valueOf(ErrorCode.DIMENSION_IS_EMPTY.getErrorCode()));
+            }else {
+                Dimention dimension = dimensionOptional.get();
+                dimension.setLastUpdated(new Timestamp(System.currentTimeMillis()));
+                BeanUtils.copyProperties(dimensionDTO, dimension, "id");
+                dimentionRepository.save(dimension);
+                return dimensionDTO;
+            }
+        }
     }
 
     @Override
@@ -231,12 +251,12 @@ public class UserService implements IUserService {
         if (userOptional.isPresent()){
             Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);
             if(!dimentionOptional.isPresent()) {
-                throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+                throw new BusinessException(ErrorCode.DIMENSION_IS_EMPTY, String.valueOf(ErrorCode.DIMENSION_IS_EMPTY.getErrorCode()));
             }else{
-                dimentionRepository.deleteByIdAndUserId(dimensionId,userId);
+                dimentionRepository.delete(dimentionOptional.get());
             }
         } else {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }
     }
 }

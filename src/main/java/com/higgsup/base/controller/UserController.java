@@ -40,6 +40,7 @@ public class UserController {
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(responseMessage);
     }
+
     @PutMapping("/{id}")
     @RequestLogger
     public ResponseEntity<ResponseMessage> updateUser(@PathVariable("id") Long id, @RequestBody UserDTO userDTO) {
@@ -53,10 +54,11 @@ public class UserController {
 
     @GetMapping("/{id}/dimensions")
     @RequestLogger
-    public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam("limit") Integer limit) {
+    public ResponseEntity<ResponseMessage> getDimensions(@PathVariable("id") Long id, @RequestParam(value ="limit",  required = false) Integer limit) {
 
         ResponseMessage<List<DimensionDTO>> responseMessage = new ResponseMessage<>();
-        responseMessage.setData(userService.getDimensions(id, limit));
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.getDimensions(userContext.getUserId(), limit));
         responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(responseMessage);
     }
@@ -80,6 +82,7 @@ public class UserController {
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
+
     @PutMapping(value = "/{id}/addresses/{addressId}")
     @RequestLogger
     public ResponseEntity<ResponseMessage> updateAddress(@PathVariable("id") Long id,
@@ -102,24 +105,49 @@ public class UserController {
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
+
     @DeleteMapping(value = "/{id}/dimension/{dimensionId}")
     @RequestLogger
     public ResponseEntity<ResponseMessage> deleteDimension(@PathVariable("id") Long id,
-                                                         @PathVariable("dimensionId") Long dimensionId) {
+                                                           @PathVariable("dimensionId") Long dimensionId) {
 
         ResponseMessage result = new ResponseMessage();
-        userService.deleteDimension(dimensionId,id);
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.deleteDimension(dimensionId,userContext.getUserId());
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
     }
+
     @PostMapping("/{id}/change_pass")
     public ResponseEntity<ResponseMessage> changePass(@PathVariable("id") Long id,
-            @RequestBody ChangePassRequest changePassRequest) {
+                                                      @RequestBody ChangePassRequest changePassRequest) {
         UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         ResponseMessage result = new ResponseMessage();
         result.setData(userService.changePassword(userContext.getUserId(), changePassRequest.getOldPassword(),
                 changePassRequest.getNewPassword(), changePassRequest.getConfirmPassword()));
         result.setStatus(HttpStatus.OK.getReasonPhrase());
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{id}/dimension")
+    public ResponseEntity<ResponseMessage> saveDimension(@PathVariable("id") Long id,
+                                                         @RequestBody DimensionDTO dimensionDTO) {
+        ResponseMessage result = new ResponseMessage();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        result.setData(userService.saveDimension(dimensionDTO,userContext.getUserId()));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}/dimension/{dimensionId}")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> updateDimension(@PathVariable("id") Long id,
+                                                           @RequestBody DimensionDTO dimensionDTO,
+                                                           @PathVariable("dimensionId") Long dimensionId) {
+        ResponseMessage<DimensionDTO> responseMessage = new ResponseMessage<>();
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        responseMessage.setData(userService.updateDimension(userContext.getUserId(), dimensionDTO, dimensionId));
+        responseMessage.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(responseMessage);
     }
 }
