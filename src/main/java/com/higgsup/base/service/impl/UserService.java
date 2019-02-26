@@ -87,16 +87,16 @@ public class UserService implements IUserService {
 
     @Override
     public List<DimensionDTO> getDimensions(Long userId, Integer dimensionNumber) {
-        List<DimensionDTO> dimensionDTOS = new ArrayList<>();
-        List<Dimention> dimentions = new ArrayList<>();
+        List<DimensionDTO> dimensionDTOS =new ArrayList<>();
+        List<Dimention> dimentions;
         Optional<User> userOptional = userRepository.findById(userId);
         if (!userOptional.isPresent()){
             throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         } else {
             if (dimensionNumber == null){
-                dimentions.addAll(dimentionRepository.findAllByUserId(userId));
+                dimentions = dimentionRepository.findAllByUserId(userId);
             } else {
-                dimentions.addAll(dimentionRepository.getDimentions(userId, dimensionNumber));
+                dimentions = dimentionRepository.getDimentions(userId, dimensionNumber);
             }
             // convert from dimension entity to dimention DTO by bean copy
             for (Dimention dimention : dimentions) {
@@ -208,7 +208,6 @@ public class UserService implements IUserService {
                 }
                 user.setPassword(passwordEncoder.encode(newPassword));
                 return userRepository.save(user) != null;
-
             }
         }
     }
@@ -216,13 +215,13 @@ public class UserService implements IUserService {
     @Override
     public DimensionDTO saveDimension(DimensionDTO dimensionDTO, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()){
+        if (!userOptional.isPresent()){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+        }else {
             Dimention dimention = mapperFacade.map(dimensionDTO, Dimention.class);
             dimention.setLastUpdated(new Timestamp(System.currentTimeMillis()));
             dimention.setUserId(userId);
             return mapperFacade.map(dimentionRepository.save(dimention), DimensionDTO.class);
-        }else {
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }
     }
 
@@ -249,14 +248,14 @@ public class UserService implements IUserService {
     public void deleteDimension(Long dimensionId, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()){
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
+        } else {
             Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);
             if(!dimentionOptional.isPresent()) {
                 throw new BusinessException(ErrorCode.DIMENSION_IS_EMPTY, String.valueOf(ErrorCode.DIMENSION_IS_EMPTY.getErrorCode()));
             }else{
                 dimentionRepository.delete(dimentionOptional.get());
             }
-        } else {
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }
     }
 }
