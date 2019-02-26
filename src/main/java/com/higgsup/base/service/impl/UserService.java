@@ -137,7 +137,7 @@ public class UserService implements IUserService {
         Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
         Optional<Country> countryOptional =   countryRepository.findById(addressDTO.getCountryId());
         if(!countryOptional.isPresent() || !addressBookOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.ADDRESS_BOOK_NOT_FOUND, String.valueOf(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getErrorCode()));
         } else {
             AddressBook addressBook = addressBookOptional.get();
             BeanUtils.copyProperties(addressDTO, addressBook, "id");
@@ -150,7 +150,7 @@ public class UserService implements IUserService {
     public void delete(Long userId, Long addressId){
         Optional<AddressBook> addressBookOptional = addressBookRepository.findById(addressId);
         if(!addressBookOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.ADDRESS_BOOK_NOT_FOUND, String.valueOf(ErrorCode.ADDRESS_BOOK_NOT_FOUND.getErrorCode()));
         }else{
             addressBookRepository.delete(addressBookOptional.get());
         }

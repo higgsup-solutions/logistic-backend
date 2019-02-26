@@ -115,7 +115,7 @@ public class CarrierService implements ICarrierService {
 
         Optional<PriceDetail> priceDetailOptional = priceDetailRepository.findByPackageId(packageId);
         if (!priceDetailOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.PACKAGE_NOT_FOUND, String.valueOf(ErrorCode.PACKAGE_NOT_FOUND.getErrorCode()));
         }
         List<City> citiesFrom = cityRepository.findByCountryIdAndCityName(countryId, cityFrom);
         List<City> citiesTo = cityRepository.findByCountryIdAndCityName(countryId, cityTo);
@@ -173,7 +173,7 @@ public class CarrierService implements ICarrierService {
 
         Optional<PriceDetail> priceDetailOptional = priceDetailRepository.findByPackageId(packageId);
         if (!priceDetailOptional.isPresent()) {
-            throw new RuntimeException(String.valueOf(ErrorCode.VALIDATION.getErrorCode()));
+            throw new BusinessException(ErrorCode.PACKAGE_NOT_FOUND, String.valueOf(ErrorCode.PACKAGE_NOT_FOUND.getErrorCode()));
         }
 
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
