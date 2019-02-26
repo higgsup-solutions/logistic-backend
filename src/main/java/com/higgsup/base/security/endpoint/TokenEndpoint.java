@@ -78,11 +78,11 @@ public class TokenEndpoint {
         String tokenPayload = tokenExtractor.extract(request.getHeader(WebSecurityConfig.AUTHENTICATION_HEADER_NAME));
         
         RawAccessJwtToken rawToken = new RawAccessJwtToken(tokenPayload);
-        RefreshToken refreshToken = RefreshToken.create(rawToken, applicationSecurityProperty.getJwt().getTokenSigningKey()).orElseThrow(() -> new InvalidJwtToken());
+        RefreshToken refreshToken = RefreshToken.create(rawToken, applicationSecurityProperty.getJwt().getTokenSigningKey()).orElseThrow(() -> new InvalidJwtToken("Invalid Jwt Token"));
 
         String userId = refreshToken.getUserId();
         if (!refreshTokenVerifier.verify(userId, tokenPayload)) {
-            throw new InvalidJwtToken();
+            throw new InvalidJwtToken("Invalid Jwt Token");
         }
 
         String subject = refreshToken.getSubject();

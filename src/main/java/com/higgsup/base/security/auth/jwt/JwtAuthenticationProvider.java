@@ -49,7 +49,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             .collect(Collectors.toList());
 
         if (!accessTokenVerifier.verify(id, rawAccessToken.getToken())) {
-            throw new InvalidJwtToken();
+            throw new InvalidJwtToken("Invalid Jwt Token");
         }
 
         UserContext context = UserContext.create(Long.valueOf(id), subject, authorities);

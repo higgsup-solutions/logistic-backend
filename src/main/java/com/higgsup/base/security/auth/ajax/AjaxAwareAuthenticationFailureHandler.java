@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.common.ErrorResponse;
 import com.higgsup.base.security.exception.AuthMethodNotSupportedException;
+import com.higgsup.base.security.exception.InvalidJwtToken;
 import com.higgsup.base.security.exception.JwtExpiredTokenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,6 +49,9 @@ public class AjaxAwareAuthenticationFailureHandler implements
 			mapper.writeValue(response.getWriter(), ErrorResponse.of("Token has expired", ErrorCode.JWT_TOKEN_EXPIRED, HttpStatus.UNAUTHORIZED));
 		} else if (e instanceof AuthMethodNotSupportedException) {
 		    mapper.writeValue(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));
+		}
+		else if (e instanceof InvalidJwtToken) {
+			mapper.writeValue(response.getWriter(), ErrorResponse.of(e.getMessage(), ErrorCode.JWT_TOKEN_INVALID, HttpStatus.UNAUTHORIZED));
 		}
 
 		mapper.writeValue(response.getWriter(), ErrorResponse.of("Authentication failed", ErrorCode.AUTHENTICATION, HttpStatus.UNAUTHORIZED));

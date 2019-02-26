@@ -20,6 +20,7 @@ public enum ErrorCode {
     CARRIER_NOT_FOUND(18),
     OLD_PASSWORD_OR_NEW_PASSWORD_INVALID(16),
     DIMENSION_IS_EMPTY(17),
+    JWT_TOKEN_INVALID(18),
     DUPPLICATE_ADDRESS(14);
 
     private int errorCode;
