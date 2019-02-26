@@ -60,7 +60,6 @@ public class CarrierService implements ICarrierService {
             List<Package> packages = packageRepository.getpackageByCarrierId(carrierId);
 
             //copy package entity to package DTO and set it to carrier DTO
-
             List<PackageDTO> packageDTOList = new ArrayList<>();
             for (Package packageItem : packages) {
                 PackageDTO packageDTO = new PackageDTO();
@@ -89,7 +88,6 @@ public class CarrierService implements ICarrierService {
         }
         else {
             Carrier carrier = carrierOptional.get();
-
             if (carrier.getCarrierType().toLowerCase().contains(CarrierType.DOMESTIC.getContent())) {
                 return doQuoteForDomestic(quoteRequest.getCarrierId(), quoteRequest.getPackageId(),
                         quoteRequest.getContentType(), quoteRequest.getCountryId(), quoteRequest.getSenderCityName(),
@@ -99,23 +97,19 @@ public class CarrierService implements ICarrierService {
                         quoteRequest.getContentType(), quoteRequest.getDimensionDTOList(), quoteRequest.getDangerousGoods());
             }
         }
-
     }
 
     private Double calculateCubicWeight(Double length, Double width, Double height) {
         return (length * width * height) / 6000;
     }
 
-
     private QuoteResultDTO doQuoteForDomestic(Long carrierId, Long packageId, String contentType,
                                               Long countryId, String cityFrom, String cityTo, List<DimensionDTO> dimensionDTOs, boolean dangerousGoods) {
-
-
         BigDecimal totalCharge;
         BigDecimal totalBaseCharge = BigDecimal.ZERO;
         Double totalWeight = 0d;
         Double actualWeight;
-        int quantity = 1;
+        int quantity;
 
         QuoteResultDTO quoteResultDTO = new QuoteResultDTO();
 
@@ -136,7 +130,7 @@ public class CarrierService implements ICarrierService {
         }
         ZonePrice zonePrice = zonePriceRepository.findByCarrierIdAndName(carrierId, zoneName);
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
-            BigDecimal baseCharge = new BigDecimal(0);
+            BigDecimal baseCharge;
             Double weight = setWeight(contentType, dimensionDTO.getLength(), dimensionDTO.getWidth(), dimensionDTO.getHeight(),dimensionDTO.getWeights(), dimensionDTO);
             quantity = dimensionDTO.getQuantity();
             actualWeight = (weight * quantity);
@@ -144,7 +138,7 @@ public class CarrierService implements ICarrierService {
             //rate
             BigDecimal weighBaseRate = getRateWeightOfDomestic(priceDetailOptional.get(), weight);
             BigDecimal weighRateZone = zonePrice.getZonePrice();
-            baseCharge = baseCharge.add((new BigDecimal(weight)).multiply(weighBaseRate).multiply(weighRateZone).multiply(new BigDecimal(quantity)));
+            baseCharge = (new BigDecimal(actualWeight)).multiply(weighBaseRate).multiply(weighRateZone);
             totalBaseCharge = totalBaseCharge.add(baseCharge);
             totalWeight += actualWeight;
         }
@@ -157,7 +151,6 @@ public class CarrierService implements ICarrierService {
             totalCharge = totalBaseCharge;
         }
 
-
         //find zone name
         quoteResultDTO.setTotalWeight(totalWeight);
         quoteResultDTO.setDimensions(dimensionDTOs);
@@ -169,11 +162,10 @@ public class CarrierService implements ICarrierService {
     }
 
     private QuoteResultDTO doQuoteForInternational(Long carrierId, Long packageId, String contentType, List<DimensionDTO> dimensionDTOs, boolean dangerousGoods) {
-
-        BigDecimal totalCharge =  BigDecimal.ZERO;
+        BigDecimal totalCharge;
         BigDecimal totalBaseCharge = BigDecimal.ZERO;
         Double totalWeight = 0d;
-        int quantity = 1;
+        int quantity;
         Double actualWeight;
 
         QuoteResultDTO quoteResultDTO = new QuoteResultDTO();
@@ -185,24 +177,24 @@ public class CarrierService implements ICarrierService {
         }
 
         for (DimensionDTO dimensionDTO : dimensionDTOs) {
-            BigDecimal baseCharge = BigDecimal.ZERO;
+            BigDecimal baseCharge;
             Double weight = setWeight(contentType,dimensionDTO.getLength(),dimensionDTO.getWidth(), dimensionDTO.getHeight(), dimensionDTO.getWeights(), dimensionDTO);
             quantity = dimensionDTO.getQuantity();
             actualWeight = (weight * quantity);
 
             //rate
             BigDecimal weighBaseRate = getRateWeightOfInternational(priceDetailOptional.get(), weight);
-            baseCharge = baseCharge.add((BigDecimal.valueOf(weight)).multiply(weighBaseRate).multiply(BigDecimal.valueOf(quantity)));
+            baseCharge = (BigDecimal.valueOf(actualWeight)).multiply(weighBaseRate);
             totalBaseCharge = totalBaseCharge.add(baseCharge);
             totalWeight += actualWeight;
         }
 
         if (dangerousGoods) {
             quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO : priceDetailOptional.get().getDangerousCharge());
-            totalCharge = totalCharge.add(totalBaseCharge).add(priceDetailOptional.get().getDangerousCharge());
+            totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge());
         } else {
             quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
-            totalCharge = totalCharge.add(totalBaseCharge).add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
+            totalCharge = totalBaseCharge.add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
         }
         quoteResultDTO.setTotalWeight(totalWeight);
         quoteResultDTO.setBaseCharge(totalBaseCharge);
