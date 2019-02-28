@@ -12,6 +12,7 @@ public class Dimention {
     private Double width;
     private Double height;
     private String name;
+    private String comment;
     private Timestamp lastUpdated;
 
     @Id
@@ -83,6 +84,17 @@ public class Dimention {
 
     public void setLastUpdated(Timestamp lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+
+    @Basic
+    @Column(name = "comment", nullable = true)
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     @Override

@@ -247,7 +247,7 @@ public class UserService implements IUserService {
     @Override
     public void deleteDimension(Long dimensionId, Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()){
+        if (!userOptional.isPresent()){
             throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         } else {
             Optional<Dimention> dimentionOptional = dimentionRepository.findById(dimensionId);

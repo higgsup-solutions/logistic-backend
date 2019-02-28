@@ -13,4 +13,5 @@ public class UserDTO {
   private String city;
   private String language;
   private String address;
+  private String phone;
 }
