@@ -13,6 +13,8 @@ import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.tomcat.jni.Address;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@CacheConfig(cacheNames = ("loginCache"))
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
@@ -56,6 +59,7 @@ public class UserService implements IUserService {
 
 
     @Override
+    @Cacheable
     public User getByEmail(String email) {
         return userRepository.findByEmail(email);
     }
@@ -162,6 +166,7 @@ public class UserService implements IUserService {
         }
     }
     @Override
+    @Cacheable
     public UserDTO findUser(Long userId){
         Optional<User> userOptional = userRepository.findById(userId);
         if(!userOptional.isPresent()) {
