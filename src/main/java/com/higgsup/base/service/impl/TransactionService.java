@@ -139,7 +139,7 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public List<LocationLog> getLocationLog(Long transactionId, Long userId) {
-        if(!transactionRepository.existsByUserIdAndId(transactionId, userId)) {
+        if(!transactionRepository.existsByIdAndUserId(transactionId, userId)) {
             return null;
         }
 

@@ -16,5 +16,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             nativeQuery = true)
     Page<Transaction> fullTextSearch(@Param("userId") Long userId, @Param("textSearch") String textSearch, Pageable pageable);
 
-    Boolean existsByUserIdAndId(Long id, Long userId);
+    Boolean existsByIdAndUserId(Long id, Long userId);
 }
