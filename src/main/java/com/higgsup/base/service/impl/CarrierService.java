@@ -191,7 +191,7 @@ public class CarrierService implements ICarrierService {
 
         if (dangerousGoods) {
             quoteResultDTO.setDangerousCharge(priceDetailOptional.get().getDangerousCharge() == null ? BigDecimal.ZERO : priceDetailOptional.get().getDangerousCharge());
-            totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge());
+            totalCharge = totalBaseCharge.add(priceDetailOptional.get().getDangerousCharge()).add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
         } else {
             quoteResultDTO.setDangerousCharge(BigDecimal.ZERO);
             totalCharge = totalBaseCharge.add(fuelSurcharge(totalBaseCharge, carrier.getCarrierType()));
@@ -230,7 +230,7 @@ public class CarrierService implements ICarrierService {
     }
 
     private BigDecimal fuelSurcharge(BigDecimal baseCharge, String carrierType) {
-        if (carrierType.toUpperCase().contains(CarrierType.TNT.getContent())) {
+        if (carrierType.toUpperCase().contains(CarrierType.DHL.getContent())) {
             return (baseCharge.multiply(BigDecimal.valueOf(4L)).divide(BigDecimal.valueOf(100L)));
 
         } else {
