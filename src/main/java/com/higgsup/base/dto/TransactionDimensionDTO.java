@@ -7,7 +7,7 @@ public class TransactionDimensionDTO {
     private Long id;
     private Long transactionId;
     private Double length;
-    private String name;
+    private String name = "";
     private Double width;
     private Double height;
     private Double weights;
