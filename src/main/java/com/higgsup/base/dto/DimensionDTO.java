@@ -7,11 +7,11 @@ import lombok.Data;
 public class DimensionDTO {
   private Long id;
   private Double length;
-  private String name;
+  private String name = "";
   private Double width;
   private Double height;
   private Double weights;
   private Integer quantity;
-  private String comment;
+  private String comment = "";
   private Double cubicWeight = 0d;
 }

@@ -94,7 +94,7 @@ public class UserService implements IUserService {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         } else {
             if (dimensionNumber == null){
-                dimentions = dimentionRepository.findAllByUserId(userId);
+                dimentions = dimentionRepository.findAllByUserIdOrderByLastUpdatedDesc(userId);
             } else {
                 dimentions = dimentionRepository.getDimentions(userId, dimensionNumber);
             }

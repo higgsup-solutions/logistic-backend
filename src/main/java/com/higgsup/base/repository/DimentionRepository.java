@@ -9,8 +9,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 public interface DimentionRepository extends JpaRepository<Dimention, Long> {
-    @Query(value = "SELECT * from dimention WHERE user_id =:id ORDER BY last_updated ASC LIMIT :dimensionNumber", nativeQuery = true)
+    @Query(value = "SELECT * from dimention WHERE user_id =:id ORDER BY last_updated DESC LIMIT :dimensionNumber", nativeQuery = true)
     List<Dimention> getDimentions(Long id, Integer dimensionNumber);
 
-    List<Dimention> findAllByUserId(Long userId);
+    List<Dimention> findAllByUserIdOrderByLastUpdatedDesc(Long userId);
 }
