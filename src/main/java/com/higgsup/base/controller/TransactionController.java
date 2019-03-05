@@ -75,4 +75,14 @@ public class TransactionController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping(value = "/{id}/location")
+    @RequestLogger
+    public ResponseEntity<ResponseMessage> getLocationLog(@PathVariable("id") Long transactionId) {
+        UserContext userContext = (UserContext) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        ResponseMessage result = new ResponseMessage();
+        result.setData(transactionService.getLocationLog(transactionId, userContext.getUserId()));
+        result.setStatus(HttpStatus.OK.getReasonPhrase());
+        return ResponseEntity.ok(result);
+    }
+
 }
