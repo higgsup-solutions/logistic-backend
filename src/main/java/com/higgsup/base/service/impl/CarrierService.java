@@ -10,14 +10,18 @@ import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.repository.*;
 import com.higgsup.base.service.ICarrierService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.beans.FeatureDescriptor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Transactional()
@@ -63,7 +67,7 @@ public class CarrierService implements ICarrierService {
             List<PackageDTO> packageDTOList = new ArrayList<>();
             for (Package packageItem : packages) {
                 PackageDTO packageDTO = new PackageDTO();
-                BeanUtils.copyProperties(packageItem, packageDTO);
+                BeanUtils.copyProperties(packageItem, packageDTO, getNullPropertyNames(packageItem));
                 packageDTOList.add(packageDTO);
                 carrierDTO.setPackageDTO(packageDTOList);
             }
@@ -247,5 +251,12 @@ public class CarrierService implements ICarrierService {
             dimensionDTO.setCubicWeight(cubicWeight);
             return baseWeight > cubicWeight ? baseWeight : cubicWeight;
         }
+    }
+    public static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
+        return Stream.of(wrappedSource.getPropertyDescriptors())
+                .map(FeatureDescriptor::getName)
+                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
+                .toArray(String[]::new);
     }
 }

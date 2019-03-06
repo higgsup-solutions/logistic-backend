@@ -13,15 +13,19 @@ import com.higgsup.base.service.IUserService;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.beans.FeatureDescriptor;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -101,7 +105,7 @@ public class UserService implements IUserService {
             // convert from dimension entity to dimention DTO by bean copy
             for (Dimention dimention : dimentions) {
                 DimensionDTO dimensionDTO = new DimensionDTO();
-                BeanUtils.copyProperties(dimention, dimensionDTO);
+                BeanUtils.copyProperties(dimention, dimensionDTO, getNullPropertyNames(dimention));
                 dimensionDTOS.add(dimensionDTO);
             }
             return dimensionDTOS;
@@ -118,7 +122,7 @@ public class UserService implements IUserService {
         List<AddressDTO> addressDTOList = new ArrayList<>();
         for(UserAddress userAddress : addressList){
             AddressDTO addressDTO = new AddressDTO();
-            BeanUtils.copyProperties(userAddress, addressDTO);
+            BeanUtils.copyProperties(userAddress, addressDTO, getNullPropertyNames(userAddress));
             addressDTO.setId(userAddress.getId().longValue());
             addressDTO.setCountryId(userAddress.getCountryId().longValue());
             addressDTO.setId(userAddress.getId().longValue());
@@ -170,7 +174,7 @@ public class UserService implements IUserService {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND, String.valueOf(ErrorCode.USER_NOT_FOUND.getErrorCode()));
         }else{
             UserDTO userDTO = new UserDTO();
-            BeanUtils.copyProperties(userOptional.get(), userDTO);
+            BeanUtils.copyProperties(userOptional.get(), userDTO, getNullPropertyNames(userOptional.get()));
             return userDTO;
         }
     }
@@ -257,5 +261,12 @@ public class UserService implements IUserService {
                 dimentionRepository.delete(dimentionOptional.get());
             }
         }
+    }
+    public static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper wrappedSource = new BeanWrapperImpl(source);
+        return Stream.of(wrappedSource.getPropertyDescriptors())
+                .map(FeatureDescriptor::getName)
+                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
+                .toArray(String[]::new);
     }
 }
