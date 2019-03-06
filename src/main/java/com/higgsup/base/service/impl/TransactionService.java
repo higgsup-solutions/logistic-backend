@@ -1,12 +1,10 @@
 package com.higgsup.base.service.impl;
 
 import com.higgsup.base.dto.*;
+import com.higgsup.base.entity.LocationLog;
 import com.higgsup.base.entity.Transaction;
 import com.higgsup.base.entity.TransactionDimension;
-import com.higgsup.base.repository.CarrierRepository;
-import com.higgsup.base.repository.PackageRepository;
-import com.higgsup.base.repository.TransactionDimensionRepository;
-import com.higgsup.base.repository.TransactionRepository;
+import com.higgsup.base.repository.*;
 import com.higgsup.base.service.ITransactionService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.data.domain.Page;
@@ -32,15 +30,17 @@ public class TransactionService implements ITransactionService {
     private final CarrierRepository carrierRepository;
     private final PackageRepository packageRepository;
     private final TransactionDimensionRepository transactionDimensionRepository;
+    private final LocationLogRepository locationLogRepository;
 
 
-    public TransactionService(TransactionRepository transactionRepository, MapperFacade mapperFacade, CarrierService carrierService, CarrierRepository carrierRepository, PackageRepository packageRepository, TransactionDimensionRepository transactionDimensionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, MapperFacade mapperFacade, CarrierService carrierService, CarrierRepository carrierRepository, PackageRepository packageRepository, TransactionDimensionRepository transactionDimensionRepository, LocationLogRepository locationLogRepository) {
         this.transactionRepository = transactionRepository;
         this.mapperFacade = mapperFacade;
         this.carrierService = carrierService;
         this.carrierRepository = carrierRepository;
         this.packageRepository = packageRepository;
         this.transactionDimensionRepository = transactionDimensionRepository;
+        this.locationLogRepository = locationLogRepository;
     }
 
     @Override
@@ -135,6 +135,15 @@ public class TransactionService implements ITransactionService {
         transaction.setPieces(peices);
 
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    public List<LocationLog> getLocationLog(Long transactionId, Long userId) {
+        if(!transactionRepository.existsByIdAndUserId(transactionId, userId)) {
+            return null;
+        }
+
+        return locationLogRepository.findByTransactionId(transactionId);
     }
 
     private String getTrackingNumber() {

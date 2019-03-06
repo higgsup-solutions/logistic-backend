@@ -11,6 +11,6 @@ public class BookingDTO {
     private AddressDTO recipientAddress;
     private QuoteRequest quoteRequest;
     private Timestamp shippingDate;
-    private String serviceType;
+    private String serviceType = "";
 
 }

@@ -7,20 +7,21 @@ import java.util.Objects;
 @Entity
 @Table(name = "location_log")
 public class LocationLog {
-    private long id;
+    private Long id;
     private Long transactionId;
     private String latitude;
     private String longitude;
+    private String locationType;
     private Timestamp createdDate;
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -62,6 +63,16 @@ public class LocationLog {
 
     public void setCreatedDate(Timestamp createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Basic
+    @Column(name = "location_type", nullable = true, length = 255)
+    public String getLocationType() {
+        return locationType;
+    }
+
+    public void setLocationType(String locationType) {
+        this.locationType = locationType;
     }
 
     @Override
