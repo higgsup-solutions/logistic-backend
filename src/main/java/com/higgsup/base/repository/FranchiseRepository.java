@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface FranchiseRepository extends JpaRepository<Franchise, Long> {
-    Boolean existsByEmail(String email);
     @Query(value = "select relationship FROM franchise where id =:id", nativeQuery = true)
     String findRelationshipById(Long id);
 
@@ -17,4 +16,9 @@ public interface FranchiseRepository extends JpaRepository<Franchise, Long> {
     @Query(value = "SELECT email from franchise", nativeQuery = true)
     List<String> emailList();
 
+    @Query(value = "SELECT * from franchise", nativeQuery = true)
+    List<Franchise> getAllFranchiseInfo();
+
+    @Query(value = "SELECT * from franchise where relationship LIKE CONCAT('%',:id,'%')", nativeQuery = true)
+    List<Franchise> getAllSubFranchiseInfo(Long id);
 }

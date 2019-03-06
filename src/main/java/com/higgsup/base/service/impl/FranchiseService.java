@@ -4,6 +4,7 @@ import com.higgsup.base.common.ErrorCode;
 import com.higgsup.base.dto.FranchiseBaseRateDTO;
 import com.higgsup.base.dto.FranchiseBasicInfoDTO;
 import com.higgsup.base.dto.FranchiseDTO;
+import com.higgsup.base.dto.SubFranchiseDTO;
 import com.higgsup.base.entity.Franchise;
 import com.higgsup.base.entity.FranchiseBaseRate;
 import com.higgsup.base.exception.BusinessException;
@@ -72,5 +73,21 @@ public class FranchiseService implements IFranchiseService {
 
             return result;
         }
+    }
+
+    @Override
+    public SubFranchiseDTO getListInfoFranchise(Long currentFranchiseId) {
+        SubFranchiseDTO subFranchiseDTO = new SubFranchiseDTO();
+        List<FranchiseBasicInfoDTO> franchiseBasicInfoDTOList = new ArrayList<>();
+        List<Franchise> franchiseList = franchiseRepository.getAllSubFranchiseInfo(currentFranchiseId);
+
+        for (Franchise franchise : franchiseList){
+            FranchiseBasicInfoDTO franchiseBasicInfoDTO = new FranchiseBasicInfoDTO();
+            BeanUtils.copyProperties(franchise,franchiseBasicInfoDTO);
+            franchiseBasicInfoDTOList.add(franchiseBasicInfoDTO);
+        }
+        subFranchiseDTO.setFranchiseBasicInfoDTOs(franchiseBasicInfoDTOList);
+        subFranchiseDTO.setTotalSubFranchise(franchiseBasicInfoDTOList.size());
+        return subFranchiseDTO;
     }
 }
