@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 public class FranchiseBaseRate {
     private Long id;
     private Long carrierId;
+    private Long franchiseId;
     private BigDecimal franchiseBaseRate1;
     private BigDecimal franchiseBaseRate2;
     private BigDecimal franchiseBaseRate3;
@@ -86,4 +87,13 @@ public class FranchiseBaseRate {
         this.updatedDate = updatedDate;
     }
 
+    @Basic
+    @Column(name = "franchise_id", nullable = true)
+    public Long getFranchiseId() {
+        return franchiseId;
+    }
+
+    public void setFranchiseId(Long franchiseId) {
+        this.franchiseId = franchiseId;
+    }
 }

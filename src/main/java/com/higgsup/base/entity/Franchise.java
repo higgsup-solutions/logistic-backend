@@ -2,9 +2,9 @@ package com.higgsup.base.entity;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity
-@Table(name = "address_book")
 public class Franchise {
     private Long id;
     private String name;
@@ -20,6 +20,7 @@ public class Franchise {
     private String stateCode;
     private String postalCode;
     private Timestamp startedDate;
+    private String email;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -160,5 +161,42 @@ public class Franchise {
 
     public void setStartedDate(Timestamp startedDate) {
         this.startedDate = startedDate;
+    }
+
+    @Basic
+    @Column(name = "email", nullable = true)
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Franchise)) return false;
+        Franchise franchise = (Franchise) o;
+        return id.equals(franchise.id) &&
+                Objects.equals(name, franchise.name) &&
+                Objects.equals(relationship, franchise.relationship) &&
+                Objects.equals(customerName, franchise.customerName) &&
+                Objects.equals(contactName, franchise.contactName) &&
+                Objects.equals(contactTitle, franchise.contactTitle) &&
+                Objects.equals(address, franchise.address) &&
+                Objects.equals(countryId, franchise.countryId) &&
+                Objects.equals(cityName, franchise.cityName) &&
+                Objects.equals(fax, franchise.fax) &&
+                Objects.equals(phone, franchise.phone) &&
+                Objects.equals(stateCode, franchise.stateCode) &&
+                Objects.equals(postalCode, franchise.postalCode) &&
+                Objects.equals(startedDate, franchise.startedDate) &&
+                Objects.equals(email, franchise.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, relationship, customerName, contactName, contactTitle, address, countryId, cityName, fax, phone, stateCode, postalCode, startedDate, email);
     }
 }
