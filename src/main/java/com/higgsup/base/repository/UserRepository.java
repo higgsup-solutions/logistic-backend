@@ -17,6 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
   List<User> findUserById(Long id);
 
-    Boolean existsByEmail(String email);
+  Boolean existsByEmail(String email);
 
+  @Query(value = "select u.* from `user` u " +
+          "join franchise f on u.franchise_id = f.id " +
+          " where f.relationship like CONCAT('%',:id,'%')", nativeQuery = true)
+  List<User> listFranchiseUser(Long id);
 }

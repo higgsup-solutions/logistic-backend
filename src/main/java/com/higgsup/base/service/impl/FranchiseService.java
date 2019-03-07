@@ -1,16 +1,15 @@
 package com.higgsup.base.service.impl;
 
 import com.higgsup.base.common.ErrorCode;
-import com.higgsup.base.dto.FranchiseBaseRateDTO;
-import com.higgsup.base.dto.FranchiseBasicInfoDTO;
-import com.higgsup.base.dto.FranchiseDTO;
-import com.higgsup.base.dto.SubFranchiseDTO;
+import com.higgsup.base.dto.*;
 import com.higgsup.base.entity.Franchise;
 import com.higgsup.base.entity.FranchiseBaseRate;
+import com.higgsup.base.entity.User;
 import com.higgsup.base.exception.BusinessException;
 import com.higgsup.base.repository.FranchiseBaseRateRepository;
 import com.higgsup.base.repository.FranchiseRepository;
 import com.higgsup.base.repository.UserRepository;
+import com.higgsup.base.repository.UserRoleRepository;
 import com.higgsup.base.service.IFranchiseService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -26,11 +25,16 @@ public class FranchiseService implements IFranchiseService {
     private final FranchiseRepository franchiseRepository;
     private final FranchiseBaseRateRepository franchiseBaseRateRepository;
     private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
 
-    public FranchiseService(FranchiseRepository franchiseRepository, FranchiseBaseRateRepository franchiseBaseRateRepository, UserRepository userRepository) {
+    public FranchiseService(FranchiseRepository franchiseRepository,
+                            FranchiseBaseRateRepository franchiseBaseRateRepository,
+                            UserRepository userRepository,
+                            UserRoleRepository userRoleRepository) {
         this.franchiseRepository = franchiseRepository;
         this.franchiseBaseRateRepository = franchiseBaseRateRepository;
         this.userRepository = userRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     @Override
@@ -89,5 +93,21 @@ public class FranchiseService implements IFranchiseService {
         subFranchiseDTO.setFranchiseBasicInfoDTOs(franchiseBasicInfoDTOList);
         subFranchiseDTO.setTotalSubFranchise(franchiseBasicInfoDTOList.size());
         return subFranchiseDTO;
+    }
+
+    @Override
+    public List<FranchiseUserDTO> getListUsers(Long currentFranchiseId) {
+        List<FranchiseUserDTO> franchiseUserDTOs = new ArrayList<>();
+        List<User> users = userRepository.listFranchiseUser(currentFranchiseId);
+        for (User user : users) {
+            FranchiseUserDTO franchiseUserDTO = new FranchiseUserDTO();
+            BeanUtils.copyProperties(user,franchiseUserDTO);
+            Long userId = franchiseUserDTO.getId();
+            franchiseUserDTO.setStartDate(franchiseRepository.getStartDateOfFranchise(currentFranchiseId, userId));
+            franchiseUserDTO.setRole(userRoleRepository.getUserRoleOfFranchise(currentFranchiseId, userId));
+
+            franchiseUserDTOs.add(franchiseUserDTO);
+        }
+        return franchiseUserDTOs;
     }
 }

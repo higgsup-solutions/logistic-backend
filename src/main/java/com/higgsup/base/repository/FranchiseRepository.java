@@ -4,6 +4,7 @@ import com.higgsup.base.entity.Franchise;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface FranchiseRepository extends JpaRepository<Franchise, Long> {
@@ -21,4 +22,9 @@ public interface FranchiseRepository extends JpaRepository<Franchise, Long> {
 
     @Query(value = "SELECT * from franchise where relationship LIKE CONCAT('%',:id,'%')", nativeQuery = true)
     List<Franchise> getAllSubFranchiseInfo(Long id);
+
+    @Query(value = "select f.started_date from user u " +
+            "join franchise f on u.franchise_id = f.id " +
+            " where f.relationship like CONCAT('%',:id,'%') and u.id =:userId", nativeQuery = true)
+    String getStartDateOfFranchise(Long id, Long userId);
 }
